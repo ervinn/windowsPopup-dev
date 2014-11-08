@@ -1,0 +1,166 @@
+<!doctype html>
+<html class="no-js">
+  <head>
+    <meta charset="utf-8">
+    <title>windowsPopup Demo</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width">
+    <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+    <!-- build:css(.) styles/vendor.css -->
+    <!-- bower:css -->
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css" />
+    <!-- endbower -->
+    <!-- endbuild -->
+    <!-- build:css(.tmp) styles/main.css -->
+    <link rel="stylesheet" href="styles/main.css">
+    <!-- endbuild -->
+    
+ <!--[if lte IE 9]>
+        <script>
+        document.createElement('ng-app');
+        document.createElement('ng-model');
+        document.createElement('win-popup');
+        document.createElement('popup-link-model');
+        // Optionally these for CSS
+        document.createElement('ng:model');
+        document.createElement('ng-app');
+      </script>
+<![endif]-->    
+    
+  </head>
+  <body id="app" ng-app="app">
+    <!--[if lt IE 7]>
+      <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+    <![endif]-->
+
+  <!-- Add your site or application content here -->
+    <div class="container"  ng-controller="parentController"  ng-style="{'background-color': bgrColor}">
+     <div class="header">
+
+    <h1>Windows Popup AngularJS Module</h1>
+
+
+   <h3> Child, Parent data binding Demo :</h3>
+
+    <div ng-view></div>
+
+     <h4> Description :</h4>
+
+     <p>
+        This is a DEMO page to show the usage of the <b>'windowsPopup'</b> AngularJS module. The <b>'windowsPopup'</b> module helps you to integrate other popup windows to your main one page application. 
+     </p>
+     <p>   
+        For each browser window AngularJs has to be loaded separatelly. You need to load the same <b>"WindowsPopup.js" </b> file in both the Parent and the Child window. 
+        The <b>'windowsPopup'</b> module helps you to communicate between the Child and Parent window.
+     </p>
+     <p>      
+        One way data binding from Child to parent is managed by the <b>'popup-link-model'</b> directive. This directive needs to be added as an attribute to an HTML tag where <b>'ng-module'</b> is present, in both Parent and Child. The <b>'popup-link-model'</b> attribute is used to link Child to parent. 
+     </p>
+     <p>
+     
+     For example, In the parent window you have :
+     <pre> &lt;input type="text" popup-link-model="<b>item_one</b>" ng-model="parentData.dat" /&gt; </pre>
+     In the Child window you have :
+     <pre> &lt;input type="text" popup-link-model="<b>item_one</b>" ng-model="childData.dat" /&gt; </pre>
+    
+    See the <b> item_one </b> value, that is used to link the Child model data to the parent model data.
+
+    In the Parent window you have :
+    <pre>
+ &lt;win-popup url="views/popupWindow.html"
+       width="500"
+       height="500"
+       <b>name="popupWindow"</b>
+       second-click-colse="true"
+       &gt;Open Popup 1 from here, using Angular&lt;/win-popup &gt;
+     </pre>
+
+     At the time of clicking on that link, the Parent model data that was marked for linking is copied to the child windows encapsulated in a shareble object. The sharable object contains callback functions that will be executed and updates the Parents model at the time when the user changes the child linked model data.
+     </p>
+      You can have only one popup window open with the same window name, see above (<b>name="popupWindow"</b>). If you want to open more windows, use a different name. 
+     <p>
+
+     </p>
+      <h4> Some sample links to open popup windows :</h4>
+      <p> Click the following link to open the popup. Click again to close : 
+         <win-popup url="views/popupWindow.html"
+                       width="500"
+                       height="500"
+                       name="popupWindow"
+                       second-click-close="true"
+                       >Win 1, using windowsPopup module</win-popup>
+     . <br />
+         The following link opens a window, but needs to be closed by the Child : 
+         <win-popup url="views/popupWindow.html"                   
+                       width="300"
+                       height="300"
+                       name="popupWindow_2"
+                       second-click-close="false"
+                       >Win 2, using windowsPopup module</win-popup>
+      </p>
+
+
+     <div>
+       <input type="text" popup-link-model="item_one" ng-model="rnParentData.dat" />
+       This is interpolated " {{ rnParentData.dat }} " data.
+     </div>
+     <div>
+       <input type="text" popup-link-model="item_two" ng-model="rnParentData_2" />
+       This is interpolated " {{ rnParentData_2 }} " data.
+     </div>
+
+     <p></p>
+
+     <p>
+      If you opened any of the windows above, you'd seen that from the Child window you were able to change the Parent beckground color. You may ask, how the data was bind from the Child when there was no <b>'ng-model'</b> tag in the Parent views. In those cases <b>'windowsPopup'</b> module gives you a service to use. You need to inject the <b>'parentSharedData'</b> service to you controller, see how was it was done for the above example :
+
+      <pre>
+.controller('ParentController', function($scope, <b> parentSharedData) </b> {
+     $scope.bgrColor = 'lightgray'; 
+     parentSharedData.<b>addOneSharedModel</b>($scope, <b>'item_three'</b>, 'bgrColor');
+}
+      </pre>
+
+      The above code is in your parent's controller function where the 'bgrColor' variable is created. See the <b> item_three </b> link name, that is used to bind the Child model back to the parent.
+
+      Lets see now where <b>item_three</b> is used in the Child.
+
+      <pre>
+  &lt;select popup-link-model=<b>"item_three"</b> 
+       ng-model="brgColor" 
+       ng-options="col for col in ['red', 'blue', 'green', 'lightgray']"&gt;
+  &lt;/select&gt;
+      </pre>
+
+      Note that the AngularJS <b>ng-model</b> name for the 'bgrColor' does not have to be the same for the parent and the child. The <b>"item_three"</b> model link has to be the same in both parent and child.
+      (BTW: in the above example the child has "brgColor", and the parent has "brgColor", not the same...)
+
+     </p>
+ </div>
+</div>
+
+    <!-- build:js(.) scripts/oldieshim.js -->
+    <!--[if lt IE 9]>
+    <script src="bower_components/es5-shim/es5-shim.js"></script>
+    <script src="bower_components/json3/lib/json3.js"></script>
+    <![endif]-->
+    <!-- endbuild -->
+
+    <!-- build:js(.) scripts/vendor.js -->
+    <!-- bower:js -->
+    <script src="bower_components/jquery/dist/jquery.js"></script>
+    <script src="bower_components/angular/angular.js"></script>
+    <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
+    <script src="bower_components/angular-resource/angular-resource.js"></script>
+    <script src="bower_components/angular-sanitize/angular-sanitize.js"></script>
+    <script src="bower_components/angular-route/angular-route.js"></script>
+    <!-- endbower -->
+    <!-- endbuild -->
+
+        <!-- build:js({.tmp,app}) scripts/scripts.js -->
+        <script src="app.js"></script>
+        <script src="components/windowsPopup.js"></script>
+        <script src="components/windowsPopupConfig.js"></script>        
+        <!-- endbuild -->
+</body>
+</html>
