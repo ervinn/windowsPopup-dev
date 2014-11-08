@@ -1,10 +1,11 @@
-# Development Environment for 'windowsPopup' AngularJS Module
+Development Environment for 'windowsPopup' AngularJS Module
+===========================================================
 
 This project is an application skeleton/demo for a typical usage of  [windowsPopup AngularJS Module](https://github.com/ervinn/windowsPopup) .  
 
 This web app. also contains the **Development Environment** of  [windowsPopup AngularJS Module](https://github.com/ervinn/windowsPopup) .
 
-The seed app doesn't do much, just shows how to use windowsPopup and how to run its unit tests.
+#### Version : beta v0.0.1 
 
 ## Getting Started
 
