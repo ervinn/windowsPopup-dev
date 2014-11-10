@@ -98,23 +98,9 @@ describe('Factory: parentDataToChild', function () {
     scope.testValue = "1234";
     parentSharedData.addOneSharedModel(scope, 'bindText', 'testValue');
   }));
-  describe('Child window should get the SharedData', function() {
+  describe('Child window should get the SharedData', function() { 
 
-    it ('Chrome, and FireFox should find sharedData, in window object', function() {
-
-      // --- Set Data for the Child Window --
-      windowMock.$$$shareData = parentSharedData.getDataForChild();
-
-      // --- Inject here, the 'window' object must be set ---
-      parentDataToChild = injector.get('parentDataToChild');
-
-      expect(parentDataToChild.isData).toEqual(true);
-      var inputData = parentDataToChild.shareData;
-      expect( inputData.bindText.data).toEqual('1234');
-      expect( inputData.bindText.name).toEqual('bindText');      
-    }); 
-
-    it ('IE should find sharedData, in window.opener object', function() {
+    it ('Browsers should find sharedData, in window.opener object', function() {
       // --- Set Data for the Child Window --
       windowMock.opener.$$$shareData = parentSharedData.getDataForChild();
 
@@ -122,7 +108,7 @@ describe('Factory: parentDataToChild', function () {
       parentDataToChild = injector.get('parentDataToChild');
 
       expect(parentDataToChild.isData).toEqual(true);
-      var inputData = parentDataToChild.shareData;
+      var inputData = parentDataToChild.get();
       expect( inputData.bindText.data).toEqual('1234');
       expect( inputData.bindText.name).toEqual('bindText');      
     });
@@ -358,7 +344,7 @@ describe('Directive: winPopup; default parameter passings', function () {
       $provide.value('popupService', popupServiceMock);
     });
   });
-
+  // -- Inject needed services --
   beforeEach(inject(function ($injector, $compile, $rootScope) {
     scope = $rootScope.$new();    
     wpopConfig = $injector.get('wpopConfig');
@@ -431,7 +417,7 @@ describe('Directive: winPopup; pre-defined window parameter passings', function 
       $provide.value('popupService', popupServiceMock);
     });
   });
-
+  // -- Inject needed services --
   beforeEach(inject(function ($injector, $compile, $rootScope) {
     scope = $rootScope.$new();    
     wpopConfig = $injector.get('wpopConfig');
@@ -509,7 +495,7 @@ describe('Directive: winPopup; attributes window parameter passings', function (
       $provide.value('popupService', popupServiceMock);
     });
   });
-
+  // -- Inject needed services --
   beforeEach(inject(function ($injector, $compile, $rootScope) {
     scope = $rootScope.$new();    
     wpopConfig = $injector.get('wpopConfig');
@@ -574,17 +560,88 @@ describe('Directive: winPopup; attributes window parameter passings', function (
 
 
 describe('Directive: popupLinkModel', function () {
-  var popupLinkModel;
-  var scope = {};
+  var parentDataToChild;
+  var parentSharedData;
+  var winPopUtil;
+  var scopeParent = {};
+  var scopeChild = {};
+  var elementParent;
+  var elementChild;
+  var compile;
+  var window;
+  var timeout;
 
   // load the controller's module
   beforeEach(module('windowsPopup'));
+  // -- Inject needed services --
+  beforeEach(inject(function ($injector, $compile, $rootScope, $window, $timeout) {
+    timeout = $timeout;
+    window = $window;
+    scopeParent = $rootScope;
+    scopeChild  = $rootScope.$new(true);
+    winPopUtil  = $injector.get('winPopUtil');
+    parentDataToChild = $injector.get('parentDataToChild');
+    parentSharedData  = $injector.get('parentSharedData');
+   
+    spyOn(parentSharedData, 'addOneSharedModel').and.callThrough();
 
-  beforeEach(inject(function ($injector) {
-    popupLinkModel = $injector.get('popupLinkModel');
+    elementParent = angular.element('<input type="text" popup-link-model="item_one" ng-model="parentData" />');
+    $compile(elementParent)(scopeParent);
+//    scopeParent.$digest();
+    
+    // elementChild = angular.element('<input type="text" popup-link-model="item_one" ng-model="ChildData" />');
+    // $compile(elementChild)(scopeChild);
+    // scopeChild.$digest();
+
+    // -- To compile the child later below --
+    compile = $compile;
   }));
 
   describe('popupLinkModel ...', function() {
+    it('Should call parentSharedData.addOneSharedModel', function(){
+      // --- Add parentData scope value ---
+      expect( parentSharedData.addOneSharedModel).toHaveBeenCalled();
+      expect( parentSharedData.addOneSharedModel.calls.count() ).toBe(1);
+    });
+
+    it('Should get the data from Parent scope to the Child scope.', function(){
+      // --- Add parentData scope value ---
+      scopeParent.parentData = "123";
+      expect( parentSharedData.addOneSharedModel).toHaveBeenCalled();
+
+      // -- Simulate the open window click by calling setDataToChild --
+      parentDataToChild.setDataToChild( function(){ console.log('closing fnc. called')} );
+      expect( parentDataToChild.isData ).toBeFalsy();
+      expect( window.$$$shareData ).toBeTruthy();
+      expect( window.opener ).toBeFalsy();
+      // --- Move shared data to window.opener --
+
+      window.opener = {};
+      window.opener.$$$shareData = window.$$$shareData;
+      window.$$$shareData = null;
+      parentDataToChild.isData = true;
+      spyOn(parentDataToChild, 'get').and.returnValue( window.opener.$$$shareData );
+
+      // -- Simulate Child window rendering --
+      elementChild = angular.element('<input type="text" popup-link-model="item_one" ng-model="ChildData" />');
+      compile(elementChild)(scopeChild);
+//      scopeChild.$digest();
+
+      expect( parentDataToChild.get).toHaveBeenCalled();
+      expect( parentDataToChild.isData ).toBeTruthy();
+      expect( scopeChild.ChildData ).toEqual("123");
+
+      // timeout(function() {
+      //   // -- Change the Child ---
+      //   scopeChild.ChildData = "NewVal";
+      //   scopeChild.$digest();
+      //   // -- Parent should change too --
+      //   expect( scopeParent.parentData ).toEqual("NewVal");
+      //   console.log(scopeParent.parentData);              
+      // }, 500);
+      // timeout.flush();
+
+    });
 
   });
 });
