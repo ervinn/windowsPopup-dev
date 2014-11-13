@@ -42,7 +42,7 @@ describe('Factory: parentSharedData', function () {;
     winPopUtil       = $injector.get('winPopUtil');
     parentSharedData = $injector.get('parentSharedData');
   }));
-  describe('addOneSharedModel & getDataForChild', function() {
+  describe('addOneSharedModel & applyAndGetDataForChild', function() {
 
     it ("Should have latest data when adding Model Data to Child Window.", function() {
 
@@ -53,14 +53,14 @@ describe('Factory: parentSharedData', function () {;
       // -- Data may change, simulate that ::
       scope.testValue = 'ChangedD';
 
-      var sharedData = parentSharedData.getDataForChild();
+      var sharedData = parentSharedData.applyAndGetDataForChild(true);
       expect( sharedData.bindText.data ).toEqual('ChangedD'); 
  
       // --- Add one more 
       scope.secondTestValue = 'value_2';
       scope.testValue = 'Changed-Again';
       parentSharedData.addOneSharedModel(scope, 'bindTextSecond', 'secondTestValue');
-      sharedData = parentSharedData.getDataForChild();
+      sharedData = parentSharedData.applyAndGetDataForChild(false);
       expect( sharedData.bindText.data ).toEqual('Changed-Again'); 
       expect( sharedData.bindTextSecond.data ).toEqual('value_2'); 
     });
@@ -102,7 +102,7 @@ describe('Factory: parentDataToChild', function () {
 
     it ('Browsers should find sharedData, in window.opener object', function() {
       // --- Set Data for the Child Window --
-      windowMock.opener.$$$shareData = parentSharedData.getDataForChild();
+      windowMock.opener.$$$shareData = parentSharedData.applyAndGetDataForChild(true);
 
       // --- Inject here, the 'window' object must be set ---
       parentDataToChild = injector.get('parentDataToChild');
@@ -324,6 +324,7 @@ describe('Directive: winPopup; default parameter passings', function () {
   var winName;
   var specsText;
   var secondClickclose;
+  var autoUpdate;
   var closingFnc;
 
   // load the controller's module
@@ -332,12 +333,13 @@ describe('Directive: winPopup; default parameter passings', function () {
   // --- Craete Mocks ---
   beforeEach(function() {
     popupServiceMock = {};
-    popupServiceMock.popWdwfnc = function( urlPar, winNamePar, specsTextPar, secondClickclosePar, closingFncPar ) {
+    popupServiceMock.popWdwfnc = function( urlPar, winNamePar, specsTextPar, secondClickclosePar, autoUpdatePar, closingFncPar ) {
       console.log('popWdwfnc() was called');
       url              = urlPar;
       winName          = winNamePar;
       specsText        = specsTextPar;
       secondClickclose = secondClickclosePar;
+      autoUpdate       = autoUpdatePar;
       closingFnc       = closingFncPar;
     };
     module(function ($provide) {
@@ -381,6 +383,7 @@ describe('Directive: winPopup; default parameter passings', function () {
       expect( specsText ).toEqual( buildSpec );
 
       expect( secondClickclose ).toEqual( defaultParams.secondClickclose );
+      expect( autoUpdate ).toEqual( defaultParams.autoUpdate );
     });
   });
 });
@@ -397,6 +400,7 @@ describe('Directive: winPopup; pre-defined window parameter passings', function 
   var winName;
   var specsText;
   var secondClickclose;
+  var autoUpdate;
   var closingFnc;
 
   // load the controller's module
@@ -405,12 +409,13 @@ describe('Directive: winPopup; pre-defined window parameter passings', function 
   // --- Craete Mocks ---
   beforeEach(function() {
     popupServiceMock = {};
-    popupServiceMock.popWdwfnc = function( urlPar, winNamePar, specsTextPar, secondClickclosePar, closingFncPar ) {
+    popupServiceMock.popWdwfnc = function( urlPar, winNamePar, specsTextPar, secondClickclosePar, autoUpdatePar, closingFncPar ) {
       console.log('popWdwfnc() was called');
       url              = urlPar;
       winName          = winNamePar;
       specsText        = specsTextPar;
       secondClickclose = secondClickclosePar;
+      autoUpdate       = autoUpdatePar;
       closingFnc       = closingFncPar;
     };
     module(function ($provide) {
@@ -456,6 +461,7 @@ describe('Directive: winPopup; pre-defined window parameter passings', function 
       expect( specsText ).toEqual( buildSpec );
 
       expect( secondClickclose ).toEqual( preDefWindowP.secondClickclose );
+      expect( autoUpdate ).toEqual( preDefWindowP.autoUpdate );
     });
   });
 });
@@ -475,6 +481,7 @@ describe('Directive: winPopup; attributes window parameter passings', function (
   var winName;
   var specsText;
   var secondClickclose;
+  var autoUpdate;
   var closingFnc;
 
   // load the controller's module
@@ -483,12 +490,13 @@ describe('Directive: winPopup; attributes window parameter passings', function (
   // --- Craete Mocks ---
   beforeEach(function() {
     popupServiceMock = {};
-    popupServiceMock.popWdwfnc = function( urlPar, winNamePar, specsTextPar, secondClickclosePar, closingFncPar ) {
+    popupServiceMock.popWdwfnc = function( urlPar, winNamePar, specsTextPar, secondClickclosePar, autoUpdatePar, closingFncPar ) {
       console.log('popWdwfnc() was called');
       url              = urlPar;
       winName          = winNamePar;
       specsText        = specsTextPar;
       secondClickclose = secondClickclosePar;
+      autoUpdate       = autoUpdatePar;
       closingFnc       = closingFncPar;
     };
     module(function ($provide) {
@@ -501,6 +509,7 @@ describe('Directive: winPopup; attributes window parameter passings', function (
     wpopConfig = $injector.get('wpopConfig');
     element = angular.element('<win-popup name="winOne" url="testUrl" \
       second-click-close="testTrue" \
+      auto-update="testAutoUpdate"  \
       width="testWidth" \
       height="testheight" \
       left="testLeft" \
@@ -549,6 +558,8 @@ describe('Directive: winPopup; attributes window parameter passings', function (
       expect( specsText ).toEqual( buildSpec );
 
       expect( secondClickclose ).toEqual( 'testTrue' );
+      expect( autoUpdate ).toEqual( 'testAutoUpdate' );
+
     });
   });
 });

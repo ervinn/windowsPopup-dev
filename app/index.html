@@ -2,7 +2,7 @@
 <html class="no-js">
   <head>
     <meta charset="utf-8">
-    <title>windowsPopup Demo</title>
+    <title>windows Popup Demo</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width">
     <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
@@ -83,22 +83,59 @@
      </p>
       <h4> Some sample links to open popup windows :</h4>
       <p> Click the following link to open the popup. Click again to close : 
-         <win-popup url="views/popupWindow.html"
-                       width="500"
+         <win-popup url="views/popupWindow.html#/sampleOne"
+                       width="450"
                        height="500"
+                       left="0"
                        name="popupWindow"
                        second-click-close="true"
                        >Win 1, using windowsPopup module</win-popup>
      . <br />
          The following link opens a window, but needs to be closed by the Child : 
-         <win-popup url="views/popupWindow.html"                   
+         <win-popup url="views/popupWindow.html#/sampleOne"
                        width="300"
                        height="300"
                        name="popupWindow_2"
                        second-click-close="false"
                        >Win 2, using windowsPopup module</win-popup>
-      </p>
+     . <br />
+         The following link opens a window, but you need to press 'Apply Change' to update : 
+         <win-popup url="views/popupWindow.html#/sampleTwo"
+                       width="400"
+                       height="500"
+                       name="popupWindow_3"
+                       auto-update="false"
+                       second-click-close="false"
+                       >Win 3, No auto update</win-popup>
+     . <br />
+         The link opens a window; there is 'Apply Change' button for each field : 
+         <win-popup url="views/popupWindow.html#/sampleThree"
+                       width="400"
+                       height="500"
+                       name="popupWindow_4"
+                       auto-update="false"
+                       second-click-close="false"
+                       >Win 4, Apply button for each value</win-popup>
+     . <br />
+         The link opens a window; there is 'Apply Change' for a group of fields : 
+         <win-popup url="views/popupWindow.html#/sampleFour"
+                       width="400"
+                       height="500"
+                       name="popupWindow_5"
+                       auto-update="false"
+                       second-click-close="false"
+                       >Win 5, Apply for a group of values.</win-popup>
+     . <br />
+         The link opens a window; that window can open an other one ... : 
+         <win-popup url="views/popupWindow.html#/sampleFive"
+                       width="400"
+                       height="500"
+                       name="popupWindow_6"
+                       auto-update="true"
+                       second-click-close="false"
+                       >Win 6, the Child will be parent.</win-popup>
 
+      </p>
 
      <div>
        <input type="text" popup-link-model="item_one" ng-model="rnParentData.dat" />

@@ -1,0 +1,22 @@
+
+  <p>This is the Popup Window (sampleTwo.html)</p>
+
+  <div>
+    <input type="text" popup-link-model="item_one" ng-model="popupInput.dat"  /> This is {{popupInput.dat}} . 
+  </div>
+  <div>
+    <input type="text" popup-link-model="item_two" ng-model="popupInput_2"  /> This is {{popupInput_2}} . 
+  </div>
+
+  <h4> Change Parent background color </h4>
+
+ <select popup-link-model="item_three" ng-model="brgColor" ng-options="col for col in ['red', 'blue', 'green', 'lightgray']"></select> <br />
+ <br />
+ <p> If you changed the above values, to update parent, click "Apply Change" below.
+ </p>
+
+ <button type="button" wnp-update-parent="ALL" >Apply Changes</button>
+<br />
+ <a wnp-update-parent="ALL" >Apply Changes</a>
+
+
