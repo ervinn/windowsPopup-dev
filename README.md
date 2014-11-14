@@ -9,6 +9,11 @@ To download the [latest stable Development Environment (deta v0.0.2) click here]
 
 #### Next Version -> beta 0.0.3 -(Not Released yet)
 
+-----
+#####New in v0.0.3 :
+- Made data binding bi-directional. Now when you update model data that is linked to child model, the child model is updated automatically.
+- Rename directives and services names. All names are prefixed with `wnp-*` .
+
 ------
 #####New in v0.0.2 :
 
