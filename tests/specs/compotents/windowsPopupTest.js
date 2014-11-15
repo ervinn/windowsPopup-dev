@@ -1,7 +1,7 @@
 'use strict';
 
-describe('Factory: winPopUtil', function () {
-  var winPopUtil;
+describe('Factory: wnpUtil', function () {
+  var wnpUtil;
   var scope = {};
 
   // -- load the Main module --
@@ -9,17 +9,17 @@ describe('Factory: winPopUtil', function () {
 
   // -- Inject needed services --
   beforeEach(inject(function ($injector) {
-    winPopUtil = $injector.get('winPopUtil');
+    wnpUtil = $injector.get('wnpUtil');
   }));
-  describe('winPopUtil.setToScope & winPopUtil.getFromScope', function() {
+  describe('wnpUtil.setToScope & wnpUtil.getFromScope', function() {
     it ("Should put the value to scope when the name has a dot in it", function() {
-      winPopUtil.setToScope(scope, 'input.data', 'value123');
+      wnpUtil.setToScope(scope, 'input.data', 'value123');
       expect(scope.input.data).toEqual('value123');
     });
 
     it ("Should get the value from scope when the name has a dot in it", function() {
       scope.input.data = 'val321';
-      var val = winPopUtil.getFromScope(scope, 'input.data');
+      var val = wnpUtil.getFromScope(scope, 'input.data');
       expect(scope.input.data).toEqual(val);
     });
 
@@ -28,10 +28,10 @@ describe('Factory: winPopUtil', function () {
 
 
 
-describe('Factory: parentSharedData', function () {;
+describe('Factory: wnpToChild', function () {;
   var scope;
-  var winPopUtil;
-  var parentSharedData;
+  var wnpUtil;
+  var wnpToChild;
 
   // load the Main testing module
   beforeEach(module('windowsPopup'));
@@ -39,8 +39,8 @@ describe('Factory: parentSharedData', function () {;
   // -- Inject needed services --
   beforeEach(inject(function ($injector, $rootScope) {
     scope            = $rootScope.$new();
-    winPopUtil       = $injector.get('winPopUtil');
-    parentSharedData = $injector.get('parentSharedData');
+    wnpUtil          = $injector.get('wnpUtil');
+    wnpToChild = $injector.get('wnpToChild');
   }));
   describe('addOneSharedModel & applyAndGetDataForChild', function() {
 
@@ -48,19 +48,19 @@ describe('Factory: parentSharedData', function () {;
 
       // -- Add value to scope --
       scope.testValue = "1234";
-      // -- Add this 'parentSharedData' factory --
-      parentSharedData.addOneSharedModel(scope, 'bindText', 'testValue');
+      // -- Add this 'wnpToChild' factory --
+      wnpToChild.addOneSharedModel(scope, 'bindText', 'testValue');
       // -- Data may change, simulate that ::
       scope.testValue = 'ChangedD';
 
-      var sharedData = parentSharedData.applyAndGetDataForChild(true);
+      var sharedData = wnpToChild.applyAndGetDataForChild(true);
       expect( sharedData.bindText.data ).toEqual('ChangedD'); 
  
       // --- Add one more 
       scope.secondTestValue = 'value_2';
       scope.testValue = 'Changed-Again';
-      parentSharedData.addOneSharedModel(scope, 'bindTextSecond', 'secondTestValue');
-      sharedData = parentSharedData.applyAndGetDataForChild(false);
+      wnpToChild.addOneSharedModel(scope, 'bindTextSecond', 'secondTestValue');
+      sharedData = wnpToChild.applyAndGetDataForChild(false);
       expect( sharedData.bindText.data ).toEqual('Changed-Again'); 
       expect( sharedData.bindTextSecond.data ).toEqual('value_2'); 
     });
@@ -71,11 +71,11 @@ describe('Factory: parentSharedData', function () {;
 
 
 
-describe('Factory: parentDataToChild', function () {
+describe('Factory: wnpFromParent', function () {
   var scope;
-  var parentSharedData;
+  var wnpToChild;
   var windowMock;
-  var parentDataToChild;
+  var wnpFromParent;
   var injector;
 
   // load the controller's module
@@ -94,21 +94,21 @@ describe('Factory: parentDataToChild', function () {
   beforeEach(inject(function ($injector, $rootScope) {
     injector         = $injector;
     scope            = $rootScope.$new();  
-    parentSharedData = $injector.get('parentSharedData');
+    wnpToChild = $injector.get('wnpToChild');
     scope.testValue = "1234";
-    parentSharedData.addOneSharedModel(scope, 'bindText', 'testValue');
+    wnpToChild.addOneSharedModel(scope, 'bindText', 'testValue');
   }));
   describe('Child window should get the SharedData', function() { 
 
     it ('Browsers should find sharedData, in window.opener object', function() {
       // --- Set Data for the Child Window --
-      windowMock.opener.$$$shareData = parentSharedData.applyAndGetDataForChild(true);
+      windowMock.opener.$$$shareData = wnpToChild.applyAndGetDataForChild(true);
 
       // --- Inject here, the 'window' object must be set ---
-      parentDataToChild = injector.get('parentDataToChild');
+      wnpFromParent = injector.get('wnpFromParent');
 
-      expect(parentDataToChild.isData).toEqual(true);
-      var inputData = parentDataToChild.get();
+      expect(wnpFromParent.isData).toEqual(true);
+      var inputData = wnpFromParent.get();
       expect( inputData.bindText.data).toEqual('1234');
       expect( inputData.bindText.name).toEqual('bindText');      
     });
@@ -117,10 +117,10 @@ describe('Factory: parentDataToChild', function () {
       // --- NO Set Data for the Child Window --
 
       // --- Inject here, the 'window' object must be set ---
-      parentDataToChild = injector.get('parentDataToChild');
+      wnpFromParent = injector.get('wnpFromParent');
 
-      expect(parentDataToChild.isData).toEqual(false);
-      var inputData = parentDataToChild.shareData;
+      expect(wnpFromParent.isData).toEqual(false);
+      var inputData = wnpFromParent.shareData;
       expect( inputData ).toBeUndefined();
     });  
   });
@@ -130,9 +130,9 @@ describe('Factory: parentDataToChild', function () {
 
 
 
-describe('Factory: popupService', function () {
-  var parentSharedData;
-  var popupService;
+describe('Factory: wnpOpenService', function () {
+  var wnpToChild;
+  var wnpOpenService;
   var windowMock;
 
   // -- load the Main module --
@@ -162,35 +162,35 @@ describe('Factory: popupService', function () {
 
   // --- Inject services ---
   beforeEach(inject(function ($injector) {
-    popupService     = $injector.get('popupService');
-    parentSharedData = $injector.get('parentSharedData');
+    wnpOpenService     = $injector.get('wnpOpenService');
+    wnpToChild = $injector.get('wnpToChild');
 
     spyOn(windowMock, 'alert').and.callThrough();
     spyOn(windowMock, 'open').and.callThrough();
     spyOn(windowMock, 'close').and.callThrough();
 //    spyOn(windowMock, 'open').and.returnValue(windowMock);
   }));
-  describe('popupService.popWdwfnc', function() {
+  describe('wnpOpenService.popWdwfnc', function() {
 
     it ("Should call $window.open() method, if not opened yet.", function() {
-      var ret = popupService.popWdwfnc('dummy.html', 'winname', 'specs', 'true', function() {} ); 
+      var ret = wnpOpenService.popWdwfnc('dummy.html', 'winname', 'specs', 'true', function() {} ); 
       expect( windowMock.open ).toHaveBeenCalled();
       expect( windowMock.open.calls.count() ).toBe(1);
       expect( ret ).toEqual( true );
       // --- No data was set to Child --
 //      expect( windowMock.$$$shareData ).toBeFalsy();
       // --- There should be one open windows ---
-      expect(popupService.popWindows.winname.popWdw).toBe(windowMock); 
+      expect(wnpOpenService.popWindows.winname.popWdw).toBe(windowMock); 
     });
     it ("second-click-close=true, Second Time Should call $window.close() method, using same Window name.", function() {
       var secondclickclose = true;
-      var ret = popupService.popWdwfnc('dummy.html', 'winname', 'specs', secondclickclose, function() {} ); 
+      var ret = wnpOpenService.popWdwfnc('dummy.html', 'winname', 'specs', secondclickclose, function() {} ); 
       expect( windowMock.open ).toHaveBeenCalled();
       expect( windowMock.open.calls.count() ).toBe(1);
       expect( windowMock.close.calls.count() ).toBe(0);
       expect( ret ).toEqual( true );
 
-      ret = popupService.popWdwfnc('dummy.html', 'winname', 'specs', secondclickclose, function() {} ); 
+      ret = wnpOpenService.popWdwfnc('dummy.html', 'winname', 'specs', secondclickclose, function() {} ); 
 //      expect( windowMock.open ).not.toHaveNotBeenCalled();
       expect( windowMock.open.calls.count() ).toBe(1); // --- From the previous call ---
       expect( windowMock.close ).toHaveBeenCalled();
@@ -198,21 +198,21 @@ describe('Factory: popupService', function () {
       expect( ret ).toEqual( false );
 
       // --- Now should be able to ropen the window --
-      ret = popupService.popWdwfnc('dummy.html', 'winname', 'specs', secondclickclose, function() {} ); 
+      ret = wnpOpenService.popWdwfnc('dummy.html', 'winname', 'specs', secondclickclose, function() {} ); 
       expect( windowMock.open.calls.count() ).toBe(2);
       expect( ret ).toEqual( true );
     });
 
     it ("second-click-close=false, Second Time Should NOT call $window.open() method, using same Window name.", function() {
       var secondclickclose = false;
-      var ret = popupService.popWdwfnc('dummy.html', 'winname', 'specs', secondclickclose, function() {} ); 
+      var ret = wnpOpenService.popWdwfnc('dummy.html', 'winname', 'specs', secondclickclose, function() {} ); 
       expect( windowMock.open ).toHaveBeenCalled();
       expect( windowMock.open.calls.count() ).toBe(1);
       expect( windowMock.alert.calls.count() ).toBe(0);
       expect( windowMock.close.calls.count() ).toBe(0);
       expect( ret ).toEqual( true );
 
-      ret = popupService.popWdwfnc('dummy.html', 'winname', 'specs', secondclickclose, function() {} ); 
+      ret = wnpOpenService.popWdwfnc('dummy.html', 'winname', 'specs', secondclickclose, function() {} ); 
 //      expect( windowMock.open ).not.toHaveNotBeenCalled();
       expect( windowMock.open.calls.count() ).toBe(1);
       expect( windowMock.alert.calls.count() ).toBe(1);
@@ -222,13 +222,13 @@ describe('Factory: popupService', function () {
     });
     it ("second-click-close=true, Different Window name Should call $window.open() method.", function() {
       var secondclickclose = true;
-      var ret = popupService.popWdwfnc('dummy.html', 'winname', 'specs', secondclickclose, function() {} ); 
+      var ret = wnpOpenService.popWdwfnc('dummy.html', 'winname', 'specs', secondclickclose, function() {} ); 
       expect( windowMock.open ).toHaveBeenCalled();
       expect( windowMock.open.calls.count() ).toBe(1);
       expect( windowMock.close.calls.count() ).toBe(0);
       expect( ret ).toEqual( true );
 
-      ret = popupService.popWdwfnc('dummy.html', 'winname_2', 'specs', secondclickclose, function() {} ); 
+      ret = wnpOpenService.popWdwfnc('dummy.html', 'winname_2', 'specs', secondclickclose, function() {} ); 
 //      expect( windowMock.open ).not.toHaveNotBeenCalled();
       expect( windowMock.open.calls.count() ).toBe(2);
       expect( windowMock.close.calls.count() ).toBe(0);
@@ -242,9 +242,9 @@ describe('Factory: popupService', function () {
 
 
 
-describe('Directive: winPopup; testing click functionality', function () {
-  var popupService;
-  var wpopConfig;
+describe('Directive: wnpPopup; testing click functionality', function () {
+  var wnpOpenService;
+  var wnpConfig;
   var scope = {};
   var element;
   var clsIconWinLinkName;
@@ -256,27 +256,27 @@ describe('Directive: winPopup; testing click functionality', function () {
   // -- Inject needed services --
   beforeEach(inject(function ($injector, $compile, $rootScope) {
     scope = $rootScope.$new();
-    popupService = $injector.get('popupService');
-    wpopConfig   = $injector.get('wpopConfig');
+    wnpOpenService = $injector.get('wnpOpenService');
+    wnpConfig   = $injector.get('wnpConfig');
 
-    element = angular.element('<win-popup url="views/popupWindow.html" \
+    element = angular.element('<wnp-popup url="views/popupWindow.html" \
      width="500" \
      height="500" \
      name="popupWindow" \
-     second-click-colse="true">Testing</win-popup>');   
+     second-click-colse="true">Testing</wnp-popup>');   
 
     $compile(element)(scope);
 
 //    scope.$digest();
 
-    spyOn(popupService, 'popWdwfnc').and.returnValue(true);
+    spyOn(wnpOpenService, 'popWdwfnc').and.returnValue(true);
 
-    clsIconWinLinkName = wpopConfig.popupLinkCssClass;
-    clsIconOpenWinName = wpopConfig.winOpenSignCssClass;
+    clsIconWinLinkName = wnpConfig.popupLinkCssClass;
+    clsIconOpenWinName = wnpConfig.winOpenSignCssClass;
     iconElem = element.children('span');
   }));
 
-  describe('winPopup ...', function() {
+  describe('wnpPopup ...', function() {
     it ('Should have cursor:pointer css.', function() {
 
     });
@@ -290,21 +290,21 @@ describe('Directive: winPopup; testing click functionality', function () {
     });
  
     it ('Should have a bind clicked event attached to the element.', function() {
-      expect( popupService.popWdwfnc.calls.count() ).toBe(0);
+      expect( wnpOpenService.popWdwfnc.calls.count() ).toBe(0);
  //     browserTrigger(element, 'click');
       element.triggerHandler('click');
-      expect( popupService.popWdwfnc).toHaveBeenCalled();
-      expect( popupService.popWdwfnc.calls.count() ).toBe(1);
+      expect( wnpOpenService.popWdwfnc).toHaveBeenCalled();
+      expect( wnpOpenService.popWdwfnc.calls.count() ).toBe(1);
     });
 
     it ('Should the Window link and Open Window icon class toggle when the link is clicked.', function() {
-      expect( popupService.popWdwfnc.calls.count() ).toBe(0);
+      expect( wnpOpenService.popWdwfnc.calls.count() ).toBe(0);
       expect( iconElem.hasClass( clsIconWinLinkName )).toBe(true);
       expect( iconElem.hasClass( clsIconOpenWinName )).toBe(false);
  //     browserTrigger(element, 'click');
       element.triggerHandler('click');
-      expect( popupService.popWdwfnc).toHaveBeenCalled();
-      expect( popupService.popWdwfnc.calls.count() ).toBe(1);
+      expect( wnpOpenService.popWdwfnc).toHaveBeenCalled();
+      expect( wnpOpenService.popWdwfnc.calls.count() ).toBe(1);
       expect( iconElem.hasClass( clsIconWinLinkName )).toBe(false);
       expect( iconElem.hasClass( clsIconOpenWinName )).toBe(true);
     });
@@ -314,9 +314,9 @@ describe('Directive: winPopup; testing click functionality', function () {
 
 
 
-describe('Directive: winPopup; default parameter passings', function () {
-  var popupServiceMock;
-  var wpopConfig;
+describe('Directive: wnpPopup; default parameter passings', function () {
+  var wnpOpenServiceMock;
+  var wnpConfig;
   var scope = {};
   var element;
   // --- parameter values for the popWdwfnc() method call ---
@@ -332,8 +332,8 @@ describe('Directive: winPopup; default parameter passings', function () {
 
   // --- Craete Mocks ---
   beforeEach(function() {
-    popupServiceMock = {};
-    popupServiceMock.popWdwfnc = function( urlPar, winNamePar, specsTextPar, secondClickclosePar, autoUpdatePar, closingFncPar ) {
+    wnpOpenServiceMock = {};
+    wnpOpenServiceMock.popWdwfnc = function( urlPar, winNamePar, specsTextPar, secondClickclosePar, autoUpdatePar, closingFncPar ) {
       console.log('popWdwfnc() was called');
       url              = urlPar;
       winName          = winNamePar;
@@ -343,26 +343,26 @@ describe('Directive: winPopup; default parameter passings', function () {
       closingFnc       = closingFncPar;
     };
     module(function ($provide) {
-      $provide.value('popupService', popupServiceMock);
+      $provide.value('wnpOpenService', wnpOpenServiceMock);
     });
   });
   // -- Inject needed services --
   beforeEach(inject(function ($injector, $compile, $rootScope) {
     scope = $rootScope.$new();    
-    wpopConfig = $injector.get('wpopConfig');
-    element = angular.element('<win-popup name="defaultWin">Testing parameters</win-popup>');   
+    wnpConfig = $injector.get('wnpConfig');
+    element = angular.element('<wnp-popup name="defaultWin">Testing parameters</wnp-popup>');   
     $compile(element)(scope);
 //    scope.$digest();
 
-    spyOn(popupServiceMock, 'popWdwfnc').and.callThrough();
+    spyOn(wnpOpenServiceMock, 'popWdwfnc').and.callThrough();
   }));
 
-  describe('winPopup, we should get the right parameters', function() {
+  describe('wnpPopup, we should get the right parameters', function() {
 
     it ('Should get the default parameter values when calling popWdwfnc()', function() {
       element.triggerHandler('click');
 
-      var defaultParams = wpopConfig.getDefaultWindowParams();
+      var defaultParams = wnpConfig.getDefaultWindowParams();
       expect( url ).toEqual( defaultParams.url );
       expect( winName ).toEqual( defaultParams.name );
       
@@ -390,9 +390,9 @@ describe('Directive: winPopup; default parameter passings', function () {
 
 
 
-describe('Directive: winPopup; pre-defined window parameter passings', function () {
-  var popupServiceMock;
-  var wpopConfig;
+describe('Directive: wnpPopup; pre-defined window parameter passings', function () {
+  var wnpOpenServiceMock;
+  var wnpConfig;
   var scope = {};
   var element;
   // --- parameter values for the popWdwfnc() method call ---
@@ -408,8 +408,8 @@ describe('Directive: winPopup; pre-defined window parameter passings', function 
 
   // --- Craete Mocks ---
   beforeEach(function() {
-    popupServiceMock = {};
-    popupServiceMock.popWdwfnc = function( urlPar, winNamePar, specsTextPar, secondClickclosePar, autoUpdatePar, closingFncPar ) {
+    wnpOpenServiceMock = {};
+    wnpOpenServiceMock.popWdwfnc = function( urlPar, winNamePar, specsTextPar, secondClickclosePar, autoUpdatePar, closingFncPar ) {
       console.log('popWdwfnc() was called');
       url              = urlPar;
       winName          = winNamePar;
@@ -419,27 +419,27 @@ describe('Directive: winPopup; pre-defined window parameter passings', function 
       closingFnc       = closingFncPar;
     };
     module(function ($provide) {
-      $provide.value('popupService', popupServiceMock);
+      $provide.value('wnpOpenService', wnpOpenServiceMock);
     });
   });
   // -- Inject needed services --
   beforeEach(inject(function ($injector, $compile, $rootScope) {
     scope = $rootScope.$new();    
-    wpopConfig = $injector.get('wpopConfig');
-    element = angular.element('<win-popup name="winOne">Testing Pre-defined Win</win-popup>');   
+    wnpConfig = $injector.get('wnpConfig');
+    element = angular.element('<wnp-popup name="winOne">Testing Pre-defined Win</wnp-popup>');   
     $compile(element)(scope);
 //    scope.$digest();
 
-    spyOn(popupServiceMock, 'popWdwfnc').and.callThrough();
+    spyOn(wnpOpenServiceMock, 'popWdwfnc').and.callThrough();
   }));
 
-  describe('winPopup, we should get the right parameters', function() {
+  describe('wnpPopup, we should get the right parameters', function() {
 
     it ('Should get the default parameter values when calling popWdwfnc()', function() {
       element.triggerHandler('click');
 
-      var defaultParams = wpopConfig.getDefaultWindowParams();
-      var preDefWindowP = wpopConfig.getPreWindow('winOne');
+      var defaultParams = wnpConfig.getDefaultWindowParams();
+      var preDefWindowP = wnpConfig.getPreWindow('winOne');
 
       expect( url ).toEqual( preDefWindowP.url );
       expect( winName ).toEqual( 'winOne' );
@@ -471,9 +471,9 @@ describe('Directive: winPopup; pre-defined window parameter passings', function 
 
 
 
-describe('Directive: winPopup; attributes window parameter passings', function () {
-  var popupServiceMock;
-  var wpopConfig;
+describe('Directive: wnpPopup; attributes window parameter passings', function () {
+  var wnpOpenServiceMock;
+  var wnpConfig;
   var scope = {};
   var element;
   // --- parameter values for the popWdwfnc() method call ---
@@ -489,8 +489,8 @@ describe('Directive: winPopup; attributes window parameter passings', function (
 
   // --- Craete Mocks ---
   beforeEach(function() {
-    popupServiceMock = {};
-    popupServiceMock.popWdwfnc = function( urlPar, winNamePar, specsTextPar, secondClickclosePar, autoUpdatePar, closingFncPar ) {
+    wnpOpenServiceMock = {};
+    wnpOpenServiceMock.popWdwfnc = function( urlPar, winNamePar, specsTextPar, secondClickclosePar, autoUpdatePar, closingFncPar ) {
       console.log('popWdwfnc() was called');
       url              = urlPar;
       winName          = winNamePar;
@@ -500,14 +500,14 @@ describe('Directive: winPopup; attributes window parameter passings', function (
       closingFnc       = closingFncPar;
     };
     module(function ($provide) {
-      $provide.value('popupService', popupServiceMock);
+      $provide.value('wnpOpenService', wnpOpenServiceMock);
     });
   });
   // -- Inject needed services --
   beforeEach(inject(function ($injector, $compile, $rootScope) {
     scope = $rootScope.$new();    
-    wpopConfig = $injector.get('wpopConfig');
-    element = angular.element('<win-popup name="winOne" url="testUrl" \
+    wnpConfig = $injector.get('wnpConfig');
+    element = angular.element('<wnp-popup name="winOne" url="testUrl" \
       second-click-close="testTrue" \
       auto-update="testAutoUpdate"  \
       width="testWidth" \
@@ -523,20 +523,20 @@ describe('Directive: winPopup; attributes window parameter passings', function (
       status="testStatus" \
       titlebar="testTitlebar" \
       toolbar="testToolbar" \
-      >Testing Pre-defined Win</win-popup>');
+      >Testing Pre-defined Win</wnp-popup>');
     $compile(element)(scope);
 //    scope.$digest();
 
-    spyOn(popupServiceMock, 'popWdwfnc').and.callThrough();
+    spyOn(wnpOpenServiceMock, 'popWdwfnc').and.callThrough();
   }));
 
-  describe('winPopup, we should get the right parameters', function() {
+  describe('wnpPopup, we should get the right parameters', function() {
 
     it ('Should get the default parameter values when calling popWdwfnc()', function() {
       element.triggerHandler('click');
 
-      var defaultParams = wpopConfig.getDefaultWindowParams();
-      var preDefWindowP = wpopConfig.getPreWindow('winOne');
+      var defaultParams = wnpConfig.getDefaultWindowParams();
+      var preDefWindowP = wnpConfig.getPreWindow('winOne');
 
       expect( url ).toEqual( 'testUrl' );
       expect( winName ).toEqual( 'winOne' );
@@ -570,10 +570,10 @@ describe('Directive: winPopup; attributes window parameter passings', function (
 
 
 
-describe('Directive: popupLinkModel', function () {
-  var parentDataToChild;
-  var parentSharedData;
-  var winPopUtil;
+describe('Directive: wnpModel', function () {
+  var wnpFromParent;
+  var wnpToChild;
+  var wnpUtil;
   var scopeParent = {};
   var scopeChild = {};
   var elementParent;
@@ -590,17 +590,17 @@ describe('Directive: popupLinkModel', function () {
     window = $window;
     scopeParent = $rootScope;
     scopeChild  = $rootScope.$new(true);
-    winPopUtil  = $injector.get('winPopUtil');
-    parentDataToChild = $injector.get('parentDataToChild');
-    parentSharedData  = $injector.get('parentSharedData');
+    wnpUtil  = $injector.get('wnpUtil');
+    wnpFromParent = $injector.get('wnpFromParent');
+    wnpToChild  = $injector.get('wnpToChild');
    
-    spyOn(parentSharedData, 'addOneSharedModel').and.callThrough();
+    spyOn(wnpToChild, 'addOneSharedModel').and.callThrough();
 
-    elementParent = angular.element('<input type="text" popup-link-model="item_one" ng-model="parentData" />');
+    elementParent = angular.element('<input type="text" wnp-model="item_one" ng-model="parentData" />');
     $compile(elementParent)(scopeParent);
 //    scopeParent.$digest();
     
-    // elementChild = angular.element('<input type="text" popup-link-model="item_one" ng-model="ChildData" />');
+    // elementChild = angular.element('<input type="text" wnp-model="item_one" ng-model="ChildData" />');
     // $compile(elementChild)(scopeChild);
     // scopeChild.$digest();
 
@@ -608,21 +608,21 @@ describe('Directive: popupLinkModel', function () {
     compile = $compile;
   }));
 
-  describe('popupLinkModel ...', function() {
-    it('Should call parentSharedData.addOneSharedModel', function(){
+  describe('wnpModel ...', function() {
+    it('Should call wnpToChild.addOneSharedModel', function(){
       // --- Add parentData scope value ---
-      expect( parentSharedData.addOneSharedModel).toHaveBeenCalled();
-      expect( parentSharedData.addOneSharedModel.calls.count() ).toBe(1);
+      expect( wnpToChild.addOneSharedModel).toHaveBeenCalled();
+      expect( wnpToChild.addOneSharedModel.calls.count() ).toBe(1);
     });
 
     it('Should get the data from Parent scope to the Child scope.', function(){
       // --- Add parentData scope value ---
       scopeParent.parentData = "123";
-      expect( parentSharedData.addOneSharedModel).toHaveBeenCalled();
+      expect( wnpToChild.addOneSharedModel).toHaveBeenCalled();
 
       // -- Simulate the open window click by calling setDataToChild --
-      parentDataToChild.setDataToChild( function(){ console.log('closing fnc. called')} );
-      expect( parentDataToChild.isData ).toBeFalsy();
+      wnpFromParent.setDataToChild( function(){ console.log('closing fnc. called')} );
+      expect( wnpFromParent.isData ).toBeFalsy();
       expect( window.$$$shareData ).toBeTruthy();
       expect( window.opener ).toBeFalsy();
       // --- Move shared data to window.opener --
@@ -630,16 +630,16 @@ describe('Directive: popupLinkModel', function () {
       window.opener = {};
       window.opener.$$$shareData = window.$$$shareData;
       window.$$$shareData = null;
-      parentDataToChild.isData = true;
-      spyOn(parentDataToChild, 'get').and.returnValue( window.opener.$$$shareData );
+      wnpFromParent.isData = true;
+      spyOn(wnpFromParent, 'get').and.returnValue( window.opener.$$$shareData );
 
       // -- Simulate Child window rendering --
-      elementChild = angular.element('<input type="text" popup-link-model="item_one" ng-model="ChildData" />');
+      elementChild = angular.element('<input type="text" wnp-model="item_one" ng-model="ChildData" />');
       compile(elementChild)(scopeChild);
 //      scopeChild.$digest();
 
-      expect( parentDataToChild.get).toHaveBeenCalled();
-      expect( parentDataToChild.isData ).toBeTruthy();
+      expect( wnpFromParent.get).toHaveBeenCalled();
+      expect( wnpFromParent.isData ).toBeTruthy();
       expect( scopeChild.ChildData ).toEqual("123");
 
       // timeout(function() {

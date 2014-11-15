@@ -1,8 +1,8 @@
 'use strict';
 angular.module('app', ['windowsPopup'])
 
-.controller('parentController', function($scope, parentSharedData) {
+.controller('parentController', function($scope, wnpToChild) {
 	$scope.bgrColor = "lightgray";
-	parentSharedData.addOneSharedModel($scope, 'item_three', 'bgrColor');
+	wnpToChild.addOneSharedModel($scope, 'item_three', 'bgrColor');
 });
 

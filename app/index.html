@@ -19,8 +19,8 @@
         <script>
         document.createElement('ng-app');
         document.createElement('ng-model');
-        document.createElement('win-popup');
-        document.createElement('popup-link-model');
+        document.createElement('wnp-popup');
+        document.createElement('wnp-model');
         // Optionally these for CSS
         document.createElement('ng:model');
         document.createElement('ng-app');
@@ -42,8 +42,6 @@
 
    <h3> Child, Parent data binding Demo :</h3>
 
-    <div ng-view></div>
-
      <h4> Description :</h4>
 
      <p>
@@ -54,25 +52,25 @@
         The <b>'windowsPopup'</b> module helps you to communicate between the Child and Parent window.
      </p>
      <p>      
-        One way data binding from Child to parent is managed by the <b>'popup-link-model'</b> directive. This directive needs to be added as an attribute to an HTML tag where <b>'ng-module'</b> is present, in both Parent and Child. The <b>'popup-link-model'</b> attribute is used to link Child to parent. 
+        Data binding from Child to Parent is managed by the <b>'wnp-model'</b> directive. This directive needs to be added as an attribute to an HTML tag where <b>'ng-module'</b> is present, in both Parent and Child. The <b>'wnp-model'</b> attribute is used to link Child to parent. 
      </p>
      <p>
      
      For example, In the parent window you have :
-     <pre> &lt;input type="text" popup-link-model="<b>item_one</b>" ng-model="parentData.dat" /&gt; </pre>
+     <pre> &lt;input type="text" wnp-model="<b>item_one</b>" ng-model="parentData.dat" /&gt; </pre>
      In the Child window you have :
-     <pre> &lt;input type="text" popup-link-model="<b>item_one</b>" ng-model="childData.dat" /&gt; </pre>
+     <pre> &lt;input type="text" wnp-model="<b>item_one</b>" ng-model="childData.dat" /&gt; </pre>
     
     See the <b> item_one </b> value, that is used to link the Child model data to the parent model data.
 
     In the Parent window you have :
     <pre>
- &lt;win-popup url="views/popupWindow.html"
+ &lt;wnp-popup url="views/popupWindow.html"
        width="500"
        height="500"
        <b>name="popupWindow"</b>
        second-click-colse="true"
-       &gt;Open Popup 1 from here, using Angular&lt;/win-popup &gt;
+       &gt;Open Popup 1 from here, using Angular&lt;/wnp-popup &gt;
      </pre>
 
      At the time of clicking on that link, the Parent model data that was marked for linking is copied to the child windows encapsulated in a shareble object. The sharable object contains callback functions that will be executed and updates the Parents model at the time when the user changes the child linked model data.
@@ -83,78 +81,78 @@
      </p>
       <h4> Some sample links to open popup windows :</h4>
       <p> Click the following link to open the popup. Click again to close : 
-         <win-popup url="views/popupWindow.html#/sampleOne"
-                       width="450"
+         <wnp-popup url="views/popupWindow.html#/sampleOne"
+                       width="450" 
                        height="500"
                        left="0"
                        name="popupWindow"
                        second-click-close="true"
-                       >Win 1, using windowsPopup module</win-popup>
+                       >Win 1, using windowsPopup module</wnp-popup>
      . <br />
          The following link opens a window, but needs to be closed by the Child : 
-         <win-popup url="views/popupWindow.html#/sampleOne"
+         <wnp-popup url="views/popupWindow.html#/sampleOne"
                        width="300"
                        height="300"
                        name="popupWindow_2"
                        second-click-close="false"
-                       >Win 2, using windowsPopup module</win-popup>
+                       >Win 2, using windowsPopup module</wnp-popup>
      . <br />
          The following link opens a window, but you need to press 'Apply Change' to update : 
-         <win-popup url="views/popupWindow.html#/sampleTwo"
+         <wnp-popup url="views/popupWindow.html#/sampleTwo"
                        width="400"
                        height="500"
                        name="popupWindow_3"
                        auto-update="false"
                        second-click-close="false"
-                       >Win 3, No auto update</win-popup>
+                       >Win 3, No auto update</wnp-popup>
      . <br />
          The link opens a window; there is 'Apply Change' button for each field : 
-         <win-popup url="views/popupWindow.html#/sampleThree"
+         <wnp-popup url="views/popupWindow.html#/sampleThree"
                        width="400"
                        height="500"
                        name="popupWindow_4"
                        auto-update="false"
                        second-click-close="false"
-                       >Win 4, Apply button for each value</win-popup>
+                       >Win 4, Apply button for each value</wnp-popup>
      . <br />
          The link opens a window; there is 'Apply Change' for a group of fields : 
-         <win-popup url="views/popupWindow.html#/sampleFour"
+         <wnp-popup url="views/popupWindow.html#/sampleFour"
                        width="400"
                        height="500"
                        name="popupWindow_5"
                        auto-update="false"
                        second-click-close="false"
-                       >Win 5, Apply for a group of values.</win-popup>
+                       >Win 5, Apply for a group of values.</wnp-popup>
      . <br />
          The link opens a window; that window can open an other one ... : 
-         <win-popup url="views/popupWindow.html#/sampleFive"
+         <wnp-popup url="views/popupWindow.html#/sampleFive"
                        width="400"
                        height="500"
                        name="popupWindow_6"
                        auto-update="true"
                        second-click-close="false"
-                       >Win 6, the Child will be parent.</win-popup>
+                       >Win 6, the Child will be parent.</wnp-popup>
 
       </p>
 
      <div>
-       <input type="text" popup-link-model="item_one" ng-model="rnParentData.dat" />
+       <input type="text" wnp-model="item_one" ng-model="rnParentData.dat" />
        This is interpolated " {{ rnParentData.dat }} " data.
      </div>
      <div>
-       <input type="text" popup-link-model="item_two" ng-model="rnParentData_2" />
+       <input type="text" wnp-model="item_two" ng-model="rnParentData_2" />
        This is interpolated " {{ rnParentData_2 }} " data.
      </div>
 
      <p></p>
 
      <p>
-      If you opened any of the windows above, you'd seen that from the Child window you were able to change the Parent beckground color. You may ask, how the data was bind from the Child when there was no <b>'ng-model'</b> tag in the Parent views. In those cases <b>'windowsPopup'</b> module gives you a service to use. You need to inject the <b>'parentSharedData'</b> service to you controller, see how was it was done for the above example :
+      If you opened any of the windows above, you'd seen that from the Child window you were able to change the Parent beckground color. You may ask, how the data was bind from the Child when there was no <b>'ng-model'</b> tag in the Parent views. In those cases <b>'windowsPopup'</b> module gives you a service to use. You need to inject the <b>'wnpToChild'</b> service to you controller, see how was it was done for the above example :
 
       <pre>
-.controller('ParentController', function($scope, <b> parentSharedData) </b> {
+.controller('ParentController', function($scope, <b> wnpToChild) </b> {
      $scope.bgrColor = 'lightgray'; 
-     parentSharedData.<b>addOneSharedModel</b>($scope, <b>'item_three'</b>, 'bgrColor');
+     wnpToChild.<b>addOneSharedModel</b>($scope, <b>'item_three'</b>, 'bgrColor');
 }
       </pre>
 
@@ -163,7 +161,7 @@
       Lets see now where <b>item_three</b> is used in the Child.
 
       <pre>
-  &lt;select popup-link-model=<b>"item_three"</b> 
+  &lt;select wnp-model=<b>"item_three"</b> 
        ng-model="brgColor" 
        ng-options="col for col in ['red', 'blue', 'green', 'lightgray']"&gt;
   &lt;/select&gt;

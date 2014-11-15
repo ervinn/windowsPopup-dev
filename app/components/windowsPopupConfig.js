@@ -17,7 +17,7 @@ angular
     'version': '0.0.1',
    })
   
-  .provider('wpopConfig', function() {
+  .provider('wnpConfig', function() {
     var preWindows = {};
     var config = {};    
     var defaultWinValues = null;

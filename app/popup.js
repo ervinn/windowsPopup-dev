@@ -27,7 +27,7 @@ angular.module('PopupApp', ['windowsPopup', 'ngRoute'])
       });
   })
 
-.controller('childCtrl', function($scope, parentSharedData) {
+.controller('childCtrl', function($scope, wnpToChild) {
 
 });
 

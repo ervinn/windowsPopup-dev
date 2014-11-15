@@ -2,29 +2,29 @@
   <p>This is the Popup Window (sampleFive.html)</p>
 
   <div>
-  	  <input readonly="true" type="text" popup-link-model="item_one" ng-model="popupInput.dat"  />
+  	  <input readonly="true" type="text" wnp-model="item_one" ng-model="popupInput.dat"  />
      This is {{popupInput.dat}} . 
   </div>
   <div>
-     <input readonly="true" type="text" popup-link-model="item_two" ng-model="popupInput_2"  />
+     <input readonly="true" type="text" wnp-model="item_two" ng-model="popupInput_2"  />
      This is {{popupInput_2}} . 
   </div>
 
   <h4> Parent background color </h4>
 
- <select disabled="true" popup-link-model="item_three" ng-model="brgColor" ng-options="col for col in ['red', 'blue', 'green', 'lightgray']"></select> <br />
+ <select disabled="true" wnp-model="item_three" ng-model="brgColor" ng-options="col for col in ['red', 'blue', 'green', 'lightgray']"></select> <br />
  <br />
  <p> Two change the above values open a new window.
  </p>
 
 <br />
 <div>
- <win-popup url="popupWindow.html#/sampleOne"
+ <wnp-popup url="popupWindow.html#/sampleOne"
                width="300"
                height="300"
                left="200"
                name="popupWindow_2"
                second-click-close="false"
-               >Open Change window </win-popup>
+               >Open Change window </wnp-popup>
 </div>
 
