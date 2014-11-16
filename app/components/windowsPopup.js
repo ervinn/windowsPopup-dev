@@ -16,13 +16,15 @@
  */
 angular
   .module('windowsPopup', ['windowsPopupConfig']) 
-  .constant('contans', {
+  .constant('wnpContans', {
     'version': '0.0.3',
-    'last date' : '2014-11-13'
+    'release_date' : '2014-11-13',
+    'debugMode' : false
    })
-  
-  .config( function () {
-
+  .config( function (wnpContans) {
+    if (wnpContans.debugMode === true) {
+      console.log('load windowsPopup AngularJs Module version=('+wnpContans.version+') Release Date('+wnpContans.release_date+')');
+    }
   })
   
   .factory('wnpUtil', function() {
@@ -117,7 +119,7 @@ angular
     };
 
     service.notDefined = function( val ) {
-      if ( typeof val === 'undefined' ) {
+      if ( typeof val === 'undefined' || val === null) {
         return true;
       } else {
         return false;
@@ -155,13 +157,18 @@ angular
        * -- This is caled from the Child te get data from the Parent --
        */
       service.get = function() {
-        return shareData;
+        return shareData.DATA;
+         
       };
+
+      service.getWnpTitle = function() {
+        return shareData.CONFIG.wnpTitle;
+      }
 
       /**
        * -- This is called from the Popup service, when the window is opened. --
        */
-      service.setDataToChild = function(closeCallBack, autoUpdate) {
+      service.setDataToChild = function(closeCallBack, wnpAutoUpdate, wnpTitle) {
           var childOnCloseFnc = function() {
               closeCallBack();
           };
@@ -169,7 +176,7 @@ angular
               closeCallBack();
             return 'This Popup window can not be reloaded. If you want to Exit, that is okay, go ahead.';
           };
-          $window.$$$shareData = wnpToChild.applyAndGetDataForChild(autoUpdate);  
+          $window.$$$shareData = wnpToChild.applyAndGetDataForChild(wnpAutoUpdate, wnpTitle);  
           $window.$$$onCloseingFnc = childOnCloseFnc;
       };
       return service;
@@ -188,15 +195,18 @@ angular
       var service = {};
 
 
-      service.applyAndGetDataForChild = function(autoUpdate) {
+      service.applyAndGetDataForChild = function(wnpAutoUpdate, wnpTitle) {
         var ret = {};
+        ret.DATA = {};
+        ret.CONFIG = {};
         var len = dataToChildFncList.length;
         var inDta = {};
         for (var i =0; i < len; i++) {        
           inDta = dataToChildFncList[i]();
-	        inDta.autoUpdate = autoUpdate;
-          ret[inDta.name] = inDta;
+	        inDta.wnpAutoUpdate = wnpAutoUpdate;
+          ret.DATA[inDta.name] = inDta;
         }
+        ret.CONFIG.wnpTitle = wnpTitle;
         return ret;
       };
 
@@ -209,7 +219,7 @@ angular
             wnpUtil.setToScope(scope, angModel, backMsg);
             scope.$apply();
           };
-console.log('wnpUpdChild=',wnpUpdChild);          
+
           if ( wnpUtil.notDefined(wnpUpdChild)  || (wnpUpdChild != 'false' && wnpUpdChild != 'no' && wnpUpdChild != false) ) {
             inDta.updateChildfnc = function(forwardMsg) {
               // --- Dummy template method -- Child need to replace it ---
@@ -238,16 +248,14 @@ console.log('wnpUpdChild=',wnpUpdChild);
    * This service keeps references for all opened Child windows 
    */
   .factory('wnpOpenService', ['$window', 'wnpFromParent', function ($window, wnpFromParent) {
-
       var service = {
         popWindows : {}
       };
-
       /**
        * --- One Window object ---
        */
-      var OneWindow = function(name) {
-        this.name = name;
+      var OneWindow = function(wnpName) {
+        this.wnpName = wnpName;
         this.popWdw = null;
         /**
          * Check if the popup is open or closed
@@ -274,30 +282,30 @@ console.log('wnpUpdChild=',wnpUpdChild);
        * Open the popup Window
        * @return true if the window was opened 
        */
-      service.popWdwfnc = function( url, name, specsText, secondclickclose, autoUpdate, closeCallBack) {
+      service.popWdwfnc = function( url, wnpName, specsText, wnpToggleOpenClose, wnpAutoUpdate, wnpTitle, closeCallBack) {
         var ret = false;  // -- return value
 
-        var currWind = this.popWindows[name];
-        // -- Check if the window with that name is open or not ---
+        var currWind = this.popWindows[wnpName];
+        // -- Check if the window with that wnpName is open or not ---
         if ( ! currWind ) {
           // -- Create a new OneWindow object ---
-          currWind = new OneWindow(name);
-          this.popWindows[name] = currWind;
+          currWind = new OneWindow(wnpName);
+          this.popWindows[wnpName] = currWind;
         }
 
         if ( currWind.isOpen() === true ) {
           currWind.popWdw.blur();          
           currWind.popWdw.focus();
-          if ( secondclickclose === 'true' ||  secondclickclose === true ) {
+          if ( wnpToggleOpenClose === 'true' ||  wnpToggleOpenClose === true ) {
             currWind.closeWdwfnc();
           } else {
-            $window.alert('Dialog Window \"'+name+'\" is already open. Close it to open a new one.'); 
+            $window.alert('Dialog Window \"'+wnpName+'\" is already open. Close it to open a new one.'); 
           }          
         } else {
           // --- Open Child Window ---
-          currWind.popWdw = $window.open( url, name, specsText, true );
+          currWind.popWdw = $window.open( url, wnpName, specsText, true );
           // --- Set the data to Child --
-          wnpFromParent.setDataToChild(closeCallBack, autoUpdate);
+          wnpFromParent.setDataToChild(closeCallBack, wnpAutoUpdate, wnpTitle);
 
           currWind.popWdw.blur();
           currWind.popWdw.focus();
@@ -315,7 +323,7 @@ console.log('wnpUpdChild=',wnpUpdChild);
    */       
   .directive('wnpPopup', ['$window', 'wnpOpenService', 'wnpConfig', 'wnpUtil', function ($window, wnpOpenService, wnpConfig, wnpUtil) {
     return {
-        restrict: 'E',
+        restrict: 'EA',
         template : '<span class=""/><a ng-transclude></a>',
         replace : false,
         transclude: true,
@@ -329,8 +337,9 @@ console.log('wnpUpdChild=',wnpUpdChild);
 
             // --- Getting the Attributes ---
             var url = attrs.url;
-            var secondClickclose = attrs.secondClickClose;
-            var autoUpdate       = attrs.autoUpdate;
+            var wnpToggleOpenClose = attrs.wnpToggleOpenClose;
+            var wnpAutoUpdate      = attrs.wnpAutoUpdate;
+            var wnpTitle           = attrs.wnpTitle;
             specs.width      = attrs.width;
             specs.height     = attrs.height;
             specs.left       = attrs.left;
@@ -347,30 +356,35 @@ console.log('wnpUpdChild=',wnpUpdChild);
 
             // --- Get the default window spec configuration values from the Config Module ---
             var defaultParams = wnpConfig.getDefaultWindowParams();
-            // --- See if the window name is specified ---
-            var winName = attrs.name;
-            if ( winName ) {
+            // --- See if the window wnpName is specified ---
+            var wnpName = attrs.wnpName;
+            if ( wnpName ) {
               // --- Is this a pre-defined window --
-              var preDefWindow = wnpConfig.getPreWindow(winName);
+              var preDefWindow = wnpConfig.getPreWindow(wnpName);
               if ( preDefWindow ) {
                 // --- Use the predefined window values --
                 specs = wnpUtil.fillMissingParams(specs, preDefWindow.specs);
                 if ( wnpUtil.notDefined(url)              ) { url  = preDefWindow.url; }
-                if ( wnpUtil.notDefined(secondClickclose) ) { secondClickclose = preDefWindow.secondClickclose; }
-                if ( wnpUtil.notDefined(autoUpdate)       ) { autoUpdate       = preDefWindow.autoUpdate; }
+                if ( wnpUtil.notDefined(wnpToggleOpenClose) ) { wnpToggleOpenClose = preDefWindow.wnpToggleOpenClose; }
+                if ( wnpUtil.notDefined(wnpAutoUpdate)       ) { wnpAutoUpdate     = preDefWindow.wnpAutoUpdate; }
+                if ( wnpUtil.notDefined(wnpTitle)           ) { wnpTitle          = preDefWindow.wnpTitle; }
               }
               // --- Fill out the missing values from the default window ---
               specs = wnpUtil.fillMissingParams(specs, defaultParams.specs);
             } else {
-              // --- Get the default Window name, and its parameters --
-              winName = defaultParams.name;
+              // --- Get the default Window wnpName, and its parameters --
+              wnpName = defaultParams.wnpName;
               specs = defaultParams.specs;
             }
             var specsText = wnpUtil.createSpecsParam( specs );
 
             if ( wnpUtil.notDefined(url)              ) { url              = defaultParams.url; }
-            if ( wnpUtil.notDefined(secondClickclose) ) { secondClickclose = defaultParams.secondClickclose; }
-            if ( wnpUtil.notDefined(autoUpdate)       ) { autoUpdate       = defaultParams.autoUpdate; }
+            if ( wnpUtil.notDefined(wnpToggleOpenClose) ) { wnpToggleOpenClose = defaultParams.wnpToggleOpenClose; }
+            if ( wnpUtil.notDefined(wnpAutoUpdate)      ) { wnpAutoUpdate      = defaultParams.wnpAutoUpdate; }
+            if ( wnpUtil.notDefined(wnpTitle)           ) { wnpTitle          = defaultParams.wnpTitle; }
+
+            // --- If No Title specified, use the text of the link ---
+            if ( wnpUtil.notDefined(wnpTitle)  ) { wnpTitle = elem.text()  ; }
 
             /**
              * -- Add a click event handler function ---
@@ -379,10 +393,11 @@ console.log('wnpUpdChild=',wnpUpdChild);
               // --- Call a service to difplay the popup             
               var ret = wnpOpenService.popWdwfnc( 
                                       url,
-                                      winName,
+                                      wnpName,
                                       specsText, 
-                                      secondClickclose,
-                                      autoUpdate,
+                                      wnpToggleOpenClose,
+                                      wnpAutoUpdate,
+                                      wnpTitle,
                                       function () {
                                         // -- Note the remove MUST be first ---
                                         iconElem.removeClass( wnpConfig.winOpenSignCssClass );
@@ -409,7 +424,7 @@ console.log('wnpUpdChild=',wnpUpdChild);
  * --- This directive used both in parent and child to bind date from Child to Parent
  *     A Child can be a parent for an other child. ---
  */
-.directive('wnpModel', ['wnpFromParent', 'wnpToChild', 'wnpUtil', function (wnpFromParent, wnpToChild, wnpUtil) {
+.directive('wnpModel', ['$rootScope','wnpFromParent', 'wnpToChild', 'wnpUtil', function ($rootScope,wnpFromParent, wnpToChild, wnpUtil) {
     return {
         restrict: 'A',
         link: function (scope, elem, attrs) {
@@ -432,10 +447,10 @@ console.log('wnpUpdChild=',wnpUpdChild);
                 // --- Set the function the Parent should call when data changes ---
                 item.updateChildfnc = function(valueMsg) {
                   wnpUtil.setToScope(scope, angModel, valueMsg);
-                  scope.$apply();
+//                  scope.$apply();
                 };
 
-                if ( item.autoUpdate === true || item.autoUpdate === 'true'  ) {
+                if ( item.wnpAutoUpdate === true || item.wnpAutoUpdate === 'true'  ) {
                   // --- Data Bind from Child to Parent --
                   scope.$watch(angModel, function(newValue, oldValue) {
                     item.updateParentfnc(newValue);
@@ -446,7 +461,12 @@ console.log('wnpUpdChild=',wnpUpdChild);
         		      item.$$$angModel = angModel;
                 }
               }
+
+              // --- Get the CONFIG wnpTitle values ---
+              var wnpTitle = wnpFromParent.getWnpTitle();
+              $rootScope.wnpTitle = wnpTitle;
             }  
+
             if ( popupBindVar && angModel ) {
               // --- Link data from Parent scope and defer it to Shared object
               wnpToChild.addOneSharedModel(scope, popupBindVar, angModel, wnpUpdChild);
@@ -458,7 +478,13 @@ console.log('wnpUpdChild=',wnpUpdChild);
 
 /**
  *
- * --- This directive used both in child to update Parent data
+ * --- Use this directive in a button or link, which if clicked the specified wnpModel 
+ *     values will be used to update the parent Model.
+ *     Possible values for 'wnpUpdateParent' attribute.
+ *     wnpUpdateParent="ALL" -> to update parent with all wnpModel data
+ *     wnpUpdateParent="<wnpModel1>,<wnpModel2>". for exmpl : wnpUpdateParent="item_one,item_two"
+ *     will update parent only for those comma separated wnpModel values, when the button or link clicked.
+ *     This directive used both in child to update Parent data
  *     A Child can be a parent for an other child. ---
  */
 .directive('wnpUpdateParent', ['wnpFromParent', 'wnpUtil', function (wnpFromParent, wnpUtil) {

@@ -1,8 +1,8 @@
 <!doctype html>
-<html>
+<html ng-app="PopupApp" ng-controller="childCtrl">
 <head>
   <meta charset="utf-8">
-  <title>windows Popup Demo</title>
+  <title>{{wnpTitle}}</title>
  <!--[if lte IE 9]>
         <script>
         document.createElement('ng-app');
@@ -20,8 +20,9 @@
 
 </head>
 
-<body ng-app="PopupApp" ng-controller="childCtrl">
+<body>
 
+  <h4>{{wnpTitle}}</h4>
 
   <div ng-view=""></div>
 
