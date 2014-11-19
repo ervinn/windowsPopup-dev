@@ -145,29 +145,84 @@
        This is interpolated " {{ rnParentData_2 }} " data.
      </div>
 
-     <p> Button can be used instead of link :
-     <button  type="button">   
-         <wnp-popup url="views/popupWindow.html#/sampleOne"
-                       width="450" 
-                       height="500"
-                       left="0"
-                       name="popupWindow"
-                       wnp-toggle-open-close="true"
-                       >Win 1, as a button</wnp-popup> </button>
-     <br />
      Use wnp-popup as an attribute of a button :
      <button  type="button" wnp-popup=""
               url="views/popupWindow.html#/sampleOne"
                        width="300"
                        height="300"
-                       name="popupWindow_2"
-                       wnp-toggle-open-close="false"
-                       >Win 2, as a button </button>
+                       wnp-name="popupWindow_2"
+                       wnp-toggle-open-close="true"
+                       >Win 1, as a button </button>
      <br />
      </p>
-
      <p></p>
+     <hr />
 
+     <h4> Build below your own Popup Window :</h4>
+
+     <table width="100%" border="0">
+      <tr> 
+        <td>wnp-name :</td>
+        <td> <input type="text" ng-model="wnpName" /> </td>
+        <td> Does not specify the title of the new window. </td> 
+      </tr>
+      <tr>
+        <td>url :</td>
+        <td><input type="text" ng-model="wnpUrl" /> </td> 
+        <td></td>
+      </tr>
+      <tr>
+        <td>wnp-title :</td>
+        <td><input type="text" ng-model="wnpTitle" /> </td>
+        <td>This does specify the title of the new window.</td>
+      </tr>
+      <tr>
+        <td>wnp-toggle-open-close :</td>
+        <td><input type="checkbox" ng-model="wnpToggleOpenClose" ng-true-value="true" ng-false-value="false" /> </td>
+        <td>Second click will close the window, if checked.</td>
+      </tr>
+      <tr>
+        <td>wnp-auto-update :</td>
+        <td><input type="checkbox" ng-model="wnpAutoUpdate" ng-true-value="true" ng-false-value="false" /> </td>
+        <td>The Parent automatically updated when Child changes, if checked. </td>
+      </tr>
+      <tr>
+        <td>width :</td>
+        <td><input type="number" ng-model="wnpWidth" /> </td>
+        <td>Min. value is 100 </td>
+      </tr>
+      <tr>
+        <td>height :</td>
+        <td><input type="number" ng-model="wnpHeight" /> </td>
+        <td>Min. value is 100 </td>
+      </tr>
+      <tr>
+        <td>left :</td>
+        <td><input type="number" ng-model="wnpLeft" /> </td>
+        <td> The left position of the window. Negative values not allowed.</td>
+      </tr>       
+      <tr>
+        <td>top :</td>
+        <td><input type="number" ng-model="wnpTop" /> </td>
+        <td> The top position of the window. Negative values not allowed. </td>
+      </tr>      
+      <tr>
+        <td colspan="3">
+       Open your Window  : 
+       <wnp-popup url="{{wnpUrl}}"
+                     wnp-name="{{wnpName}}"
+                     wnp-title="{{wnpTitle}}"
+                     width="{{wnpWidth}}"
+                     height="{{wnpHeight}}"
+                     wnp-auto-update="{{wnpAutoUpdate}}"
+                     wnp-toggle-open-close="{{wnpToggleOpenClose}}"
+                     left="{{wnpLeft}}"
+                     top="{{wnpTop}}"
+                     >Click this.</wnp-popup>
+        </td>
+      </tr>
+      </table>
+     <hr />
      <p>
       If you opened any of the windows above, you'd seen that from the Child window you were able to change the Parent beckground color. You may ask, how the data was bind from the Child when there was no <b>'ng-model'</b> tag in the Parent views. In those cases <b>'windowsPopup'</b> module gives you a service to use. You need to inject the <b>'wnpToChild'</b> service to you controller, see how was it was done for the above example :
 
@@ -191,8 +246,8 @@
 
       Note that the AngularJS <b>ng-model</b> name for the 'bgrColor' does not have to be the same for the parent and the child. The <b>"item_three"</b> model link has to be the same in both parent and child.
       (BTW: in the above example the child has "brgColor", and the parent has "brgColor", not the same...)
-
      </p>
+
  </div>
 </div>
 

@@ -314,7 +314,8 @@ angular
         }
 
         return ret;
-      };     
+      };  
+
       return service;
   }])
         
@@ -322,98 +323,124 @@ angular
    * This is the directive to popup a window with the left mouse click 
    */       
   .directive('wnpPopup', ['$window', 'wnpOpenService', 'wnpConfig', 'wnpUtil', function ($window, wnpOpenService, wnpConfig, wnpUtil) {
-    return {
-        restrict: 'EA',
-        template : '<span class=""/><a ng-transclude></a>',
-        replace : false,
-        transclude: true,
-        link : function (scope, elem, attrs) {
-            var iconElem = elem.children('span');
-            elem.css({ 'cursor': 'pointer' });
-            iconElem.addClass( wnpConfig.popupLinkCssClass ); 
+    var ret = {};
 
-            // --- This will be the 'specs' parameter to the 'window.open()' method ---
-            var specs = {};
+    ret.restrict = 'EA';
+    ret.template = '<span class=""/><a ng-transclude></a>';
+    ret.replace  = false;
+    ret.transclude = true;
+    ret.link = function (scope, elem, attrs) {
+        var iconElem = elem.children('span');
+        elem.css({ 'cursor': 'pointer' });
+        iconElem.addClass( wnpConfig.popupLinkCssClass ); 
 
-            // --- Getting the Attributes ---
-            var url = attrs.url;
-            var wnpToggleOpenClose = attrs.wnpToggleOpenClose;
-            var wnpAutoUpdate      = attrs.wnpAutoUpdate;
-            var wnpTitle           = attrs.wnpTitle;
-            specs.width      = attrs.width;
-            specs.height     = attrs.height;
-            specs.left       = attrs.left;
-            specs.top        = attrs.top;
-            specs.location   = attrs.location;
-            specs.channelmode= attrs.channelmode;
-            specs.fullscreen = attrs.fullscreen;
-            specs.menubar    = attrs.menubar;
-            specs.resizable  = attrs.resizable;
-            specs.scrollbars = attrs.scrollbars;
-            specs.status     = attrs.status;
-            specs.titlebar   = attrs.titlebar;
-            specs.toolbar    = attrs.toolbar;
+        /**
+         * -- Add a click event handler function ---
+         */
+        elem.bind('click', function () {
+          // --- Call apply, they may use interpolation on the incoming attributes. --- 
+          scope.$apply();
 
-            // --- Get the default window spec configuration values from the Config Module ---
-            var defaultParams = wnpConfig.getDefaultWindowParams();
-            // --- See if the window wnpName is specified ---
-            var wnpName = attrs.wnpName;
-            if ( wnpName ) {
-              // --- Is this a pre-defined window --
-              var preDefWindow = wnpConfig.getPreWindow(wnpName);
-              if ( preDefWindow ) {
-                // --- Use the predefined window values --
-                specs = wnpUtil.fillMissingParams(specs, preDefWindow.specs);
-                if ( wnpUtil.notDefined(url)              ) { url  = preDefWindow.url; }
-                if ( wnpUtil.notDefined(wnpToggleOpenClose) ) { wnpToggleOpenClose = preDefWindow.wnpToggleOpenClose; }
-                if ( wnpUtil.notDefined(wnpAutoUpdate)       ) { wnpAutoUpdate     = preDefWindow.wnpAutoUpdate; }
-                if ( wnpUtil.notDefined(wnpTitle)           ) { wnpTitle          = preDefWindow.wnpTitle; }
-              }
-              // --- Fill out the missing values from the default window ---
-              specs = wnpUtil.fillMissingParams(specs, defaultParams.specs);
-            } else {
-              // --- Get the default Window wnpName, and its parameters --
-              wnpName = defaultParams.wnpName;
-              specs = defaultParams.specs;
-            }
-            var specsText = wnpUtil.createSpecsParam( specs );
+          var params = prepareParameters(attrs, elem);
 
-            if ( wnpUtil.notDefined(url)              ) { url              = defaultParams.url; }
-            if ( wnpUtil.notDefined(wnpToggleOpenClose) ) { wnpToggleOpenClose = defaultParams.wnpToggleOpenClose; }
-            if ( wnpUtil.notDefined(wnpAutoUpdate)      ) { wnpAutoUpdate      = defaultParams.wnpAutoUpdate; }
-            if ( wnpUtil.notDefined(wnpTitle)           ) { wnpTitle          = defaultParams.wnpTitle; }
+          // --- Call a service to difplay the popup  
+          var ret = wnpOpenService.popWdwfnc( 
+                                  params.wnpUrl,
+                                  params.wnpName,
+                                  params.specsText, 
+                                  params.wnpToggleOpenClose,
+                                  params.wnpAutoUpdate,
+                                  params.wnpTitle,
+                                  function () {
+                                    // -- Note the remove MUST be first ---
+                                    iconElem.removeClass( wnpConfig.winOpenSignCssClass );
+                                    iconElem.addClass   ( wnpConfig.popupLinkCssClass ); 
+                                  } );
 
-            // --- If No Title specified, use the text of the link ---
-            if ( wnpUtil.notDefined(wnpTitle)  ) { wnpTitle = elem.text()  ; }
+          if ( ret === true ) {
+            // -- Note the remove MUST be first ---
+            iconElem.removeClass( wnpConfig.popupLinkCssClass ); 
+            iconElem.addClass   ( wnpConfig.winOpenSignCssClass );
+          }
 
-            /**
-             * -- Add a click event handler function ---
-             */
-            elem.bind('click', function () {
-              // --- Call a service to difplay the popup             
-              var ret = wnpOpenService.popWdwfnc( 
-                                      url,
-                                      wnpName,
-                                      specsText, 
-                                      wnpToggleOpenClose,
-                                      wnpAutoUpdate,
-                                      wnpTitle,
-                                      function () {
-                                        // -- Note the remove MUST be first ---
-                                        iconElem.removeClass( wnpConfig.winOpenSignCssClass );
-                                        iconElem.addClass   ( wnpConfig.popupLinkCssClass ); 
-                                      } );
- 
-              if ( ret === true ) {
-                // -- Note the remove MUST be first ---
-                iconElem.removeClass( wnpConfig.popupLinkCssClass ); 
-                iconElem.addClass   ( wnpConfig.winOpenSignCssClass );
-              }
-
-            });
-        }
+      });
     };
     
+    /**
+     * Prepare parameters for 'popWdwfnc' function
+     * @return true if the window was opened 
+     */    
+    var prepareParameters = function(attrs, elem) {
+        var params = {};
+
+        // --- This will be the 'specs' parameter to the 'window.open()' method ---
+        var specs = {};
+
+        // --- Getting the Attributes ---
+        var url = attrs.url;
+        var wnpToggleOpenClose = attrs.wnpToggleOpenClose;
+        var wnpAutoUpdate      = attrs.wnpAutoUpdate;
+        var wnpTitle           = attrs.wnpTitle;
+        specs.width      = attrs.width;
+        specs.height     = attrs.height;
+        specs.left       = attrs.left;
+        specs.top        = attrs.top;
+        specs.location   = attrs.location;
+        specs.channelmode= attrs.channelmode;
+        specs.fullscreen = attrs.fullscreen;
+        specs.menubar    = attrs.menubar;
+        specs.resizable  = attrs.resizable;
+        specs.scrollbars = attrs.scrollbars;
+        specs.status     = attrs.status;
+        specs.titlebar   = attrs.titlebar;
+        specs.toolbar    = attrs.toolbar;
+
+        // --- Get the default window spec configuration values from the Config Module ---
+        var defaultParams = wnpConfig.getDefaultWindowParams();
+        // --- See if the window wnpName is specified ---
+        var wnpName = attrs.wnpName;
+        if ( wnpName ) {
+          // --- Is this a pre-defined window --
+          var preDefWindow = wnpConfig.getPreWindow(wnpName);
+          if ( preDefWindow ) {
+            // --- Use the predefined window values --
+            specs = wnpUtil.fillMissingParams(specs, preDefWindow.specs);
+            if ( wnpUtil.notDefined(url)              ) { url  = preDefWindow.url; }
+            if ( wnpUtil.notDefined(wnpToggleOpenClose) ) { wnpToggleOpenClose = preDefWindow.wnpToggleOpenClose; }
+            if ( wnpUtil.notDefined(wnpAutoUpdate)       ) { wnpAutoUpdate     = preDefWindow.wnpAutoUpdate; }
+            if ( wnpUtil.notDefined(wnpTitle)           ) { wnpTitle          = preDefWindow.wnpTitle; }
+          }
+        } else {
+          // --- Get the default Window wnpName, and its parameters --
+          wnpName = defaultParams.wnpName;
+        }
+        // --- Fill out the missing values from the default window ---
+        specs = wnpUtil.fillMissingParams(specs, defaultParams.specs);
+
+        var specsText = wnpUtil.createSpecsParam( specs );
+
+        if ( wnpUtil.notDefined(url)              ) { url              = defaultParams.url; }
+        if ( wnpUtil.notDefined(wnpToggleOpenClose) ) { wnpToggleOpenClose = defaultParams.wnpToggleOpenClose; }
+        if ( wnpUtil.notDefined(wnpAutoUpdate)      ) { wnpAutoUpdate      = defaultParams.wnpAutoUpdate; }
+        if ( wnpUtil.notDefined(wnpTitle)           ) { wnpTitle          = defaultParams.wnpTitle; }
+
+        // --- If No Title specified, use the text of the link ---
+        if ( wnpUtil.notDefined(wnpTitle)  ) { wnpTitle = elem.text()  ; }
+
+
+        params.specs = specs;
+        params.wnpName = wnpName;
+        params.wnpUrl  = url;
+        params.wnpTitle = wnpTitle;
+        params.wnpToggleOpenClose = wnpToggleOpenClose;
+        params.wnpAutoUpdate = wnpAutoUpdate;
+        params.specsText = specsText;
+
+        return params;
+       };
+
+    return ret;
+
   }])
 
 
@@ -424,7 +451,7 @@ angular
  * --- This directive used both in parent and child to bind date from Child to Parent
  *     A Child can be a parent for an other child. ---
  */
-.directive('wnpModel', ['$rootScope','wnpFromParent', 'wnpToChild', 'wnpUtil', function ($rootScope,wnpFromParent, wnpToChild, wnpUtil) {
+.directive('wnpModel', ['$rootScope','wnpFromParent', 'wnpToChild', 'wnpUtil', '$timeout', function ($rootScope,wnpFromParent, wnpToChild, wnpUtil, $timeout ) {
     return {
         restrict: 'A',
         link: function (scope, elem, attrs) {
@@ -446,7 +473,9 @@ angular
 
                 // --- Set the function the Parent should call when data changes ---
                 item.updateChildfnc = function(valueMsg) {
-                  wnpUtil.setToScope(scope, angModel, valueMsg);
+                  $timeout( function() {
+                    wnpUtil.setToScope(scope, angModel, valueMsg);
+                  }, 0 );
 //                  scope.$apply();
                 };
 

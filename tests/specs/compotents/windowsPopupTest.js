@@ -325,6 +325,7 @@ describe('Directive: wnpPopup; default parameter passings', function () {
   var specsText;
   var wnpToggleOpenClose;
   var wnpAutoUpdate;
+  var wnpTitle;
   var closingFnc;
 
   // load the controller's module
@@ -333,13 +334,14 @@ describe('Directive: wnpPopup; default parameter passings', function () {
   // --- Craete Mocks ---
   beforeEach(function() {
     wnpOpenServiceMock = {};
-    wnpOpenServiceMock.popWdwfnc = function( urlPar, winNamePar, specsTextPar, wnpToggleOpenClosePar, wnpAutoUpdatePar, closingFncPar ) {
+    wnpOpenServiceMock.popWdwfnc = function( urlPar, winNamePar, specsTextPar, wnpToggleOpenClosePar, wnpAutoUpdatePar, wnpTitlePar, closingFncPar ) {
       console.log('popWdwfnc() was called');
       url              = urlPar;
       winName          = winNamePar;
       specsText        = specsTextPar;
       wnpToggleOpenClose = wnpToggleOpenClosePar;
       wnpAutoUpdate     = wnpAutoUpdatePar;
+      wnpTitle         = wnpTitlePar;
       closingFnc       = closingFncPar;
     };
     module(function ($provide) {
@@ -384,6 +386,7 @@ describe('Directive: wnpPopup; default parameter passings', function () {
 
       expect( wnpToggleOpenClose ).toEqual( defaultParams.wnpToggleOpenClose );
       expect( wnpAutoUpdate ).toEqual( defaultParams.wnpAutoUpdate );
+      expect( wnpTitle ).toEqual( 'Testing parameters' );
     });
   });
 });
@@ -401,6 +404,7 @@ describe('Directive: wnpPopup; pre-defined window parameter passings', function 
   var specsText;
   var wnpToggleOpenClose;
   var wnpAutoUpdate;
+  var wnpTitle;
   var closingFnc;
 
   // load the controller's module
@@ -409,13 +413,14 @@ describe('Directive: wnpPopup; pre-defined window parameter passings', function 
   // --- Craete Mocks ---
   beforeEach(function() {
     wnpOpenServiceMock = {};
-    wnpOpenServiceMock.popWdwfnc = function( urlPar, winNamePar, specsTextPar, wnpToggleOpenClosePar, wnpAutoUpdatePar, closingFncPar ) {
+    wnpOpenServiceMock.popWdwfnc = function( urlPar, winNamePar, specsTextPar, wnpToggleOpenClosePar, wnpAutoUpdatePar, wnpTitlePar, closingFncPar ) {
       console.log('popWdwfnc() was called');
       url              = urlPar;
       winName          = winNamePar;
       specsText        = specsTextPar;
       wnpToggleOpenClose = wnpToggleOpenClosePar;
-      wnpAutoUpdate      = wnpAutoUpdatePar;
+      wnpAutoUpdate    = wnpAutoUpdatePar;
+      wnpTitle         = wnpTitlePar;
       closingFnc       = closingFncPar;
     };
     module(function ($provide) {
@@ -462,6 +467,7 @@ describe('Directive: wnpPopup; pre-defined window parameter passings', function 
 
       expect( wnpToggleOpenClose ).toEqual( preDefWindowP.wnpToggleOpenClose );
       expect( wnpAutoUpdate ).toEqual( preDefWindowP.wnpAutoUpdate );
+      expect( wnpTitle ).toEqual( preDefWindowP.wnpTitle );
     });
   });
 });
@@ -482,6 +488,7 @@ describe('Directive: wnpPopup; attributes window parameter passings', function (
   var specsText;
   var wnpToggleOpenClose;
   var wnpAutoUpdate;
+  var wnpTitle;
   var closingFnc;
 
   // load the controller's module
@@ -490,13 +497,14 @@ describe('Directive: wnpPopup; attributes window parameter passings', function (
   // --- Craete Mocks ---
   beforeEach(function() {
     wnpOpenServiceMock = {};
-    wnpOpenServiceMock.popWdwfnc = function( urlPar, winNamePar, specsTextPar, wnpToggleOpenClosePar, wnpAutoUpdatePar, closingFncPar ) {
+    wnpOpenServiceMock.popWdwfnc = function( urlPar, winNamePar, specsTextPar, wnpToggleOpenClosePar, wnpAutoUpdatePar, wnpTitlePar, closingFncPar ) {
       console.log('popWdwfnc() was called');
       url              = urlPar;
       winName          = winNamePar;
       specsText        = specsTextPar;
       wnpToggleOpenClose = wnpToggleOpenClosePar;
-      wnpAutoUpdate       = wnpAutoUpdatePar;
+      wnpAutoUpdate    = wnpAutoUpdatePar;
+      wnpTitle         = wnpTitlePar;
       closingFnc       = closingFncPar;
     };
     module(function ($provide) {
@@ -507,7 +515,7 @@ describe('Directive: wnpPopup; attributes window parameter passings', function (
   beforeEach(inject(function ($injector, $compile, $rootScope) {
     scope = $rootScope.$new();    
     wnpConfig = $injector.get('wnpConfig');
-    element = angular.element('<wnp-popup wnp-name="winOne" url="testUrl" \
+    element = angular.element('<wnp-popup wnp-name="winOne" url="testUrl" wnp-title="testwnpTitle" \
       wnp-toggle-open-close="testTrue" \
       wnp-auto-update="testwnpAutoUpdate"  \
       width="testWidth" \
@@ -559,12 +567,213 @@ describe('Directive: wnpPopup; attributes window parameter passings', function (
 
       expect( wnpToggleOpenClose ).toEqual( 'testTrue' );
       expect( wnpAutoUpdate ).toEqual( 'testwnpAutoUpdate' );
+      expect( wnpTitle ).toEqual( 'testwnpTitle' );
 
     });
   });
 });
 
 
+
+describe('Directive: wnpPopup; attributes window parameter passings', function () {
+  var wnpOpenServiceMock;
+  var wnpConfig;
+  var scope = {};
+  var element;
+  // --- parameter values for the popWdwfnc() method call ---
+  var url;
+  var winName;
+  var specsText;
+  var wnpToggleOpenClose;
+  var wnpAutoUpdate;
+  var wnpTitle;
+  var closingFnc;
+
+  // load the controller's module
+  beforeEach(module('windowsPopup'));
+
+  // --- Craete Mocks ---
+  beforeEach(function() {
+    wnpOpenServiceMock = {};
+    wnpOpenServiceMock.popWdwfnc = function( urlPar, winNamePar, specsTextPar, wnpToggleOpenClosePar, wnpAutoUpdatePar, wnpTitlePar, closingFncPar ) {
+      console.log('popWdwfnc() was called');
+      url              = urlPar;
+      winName          = winNamePar;
+      specsText        = specsTextPar;
+      wnpToggleOpenClose = wnpToggleOpenClosePar;
+      wnpAutoUpdate    = wnpAutoUpdatePar;
+      wnpTitle         = wnpTitlePar;
+      closingFnc       = closingFncPar;
+    };
+    module(function ($provide) {
+      $provide.value('wnpOpenService', wnpOpenServiceMock);
+    });
+  });
+  // -- Inject needed services --
+  beforeEach(inject(function ($injector, $compile, $rootScope) {
+    scope = $rootScope.$new();    
+    wnpConfig = $injector.get('wnpConfig');
+    element = angular.element('<wnp-popup  url="testUrl" wnp-title="testwnpTitle" \
+      wnp-toggle-open-close="testTrue" \
+      wnp-auto-update="testwnpAutoUpdate"  \
+      width="testWidth" \
+      height="testheight" \
+      left="testLeft" \
+      top="testTop" \
+      location="testLocation" \
+      channelmode="testChannelmode" \
+      fullscreen="testFullscreen" \
+      menubar="testMenubar" \
+      resizable="testResizable" \
+      scrollbars="testScrollbars" \
+      status="testStatus" \
+      titlebar="testTitlebar" \
+      toolbar="testToolbar" \
+      >Testing Pre-defined Win</wnp-popup>');
+    $compile(element)(scope);
+//    scope.$digest();
+
+    spyOn(wnpOpenServiceMock, 'popWdwfnc').and.callThrough();
+  }));
+
+  describe('wnpPopup, wnpName is NOT specified, but we we still should->', function() {
+
+    it ('Should get the default parameter values when calling popWdwfnc()', function() {
+      element.triggerHandler('click');
+
+      var defaultParams = wnpConfig.getDefaultWindowParams();
+      var preDefWindowP = wnpConfig.getPreWindow('winOne');
+
+      expect( url ).toEqual( 'testUrl' );
+      expect( winName ).toEqual( defaultParams.wnpName );
+      
+//      console.log(specsText);      
+      var buildSpec = 'width=testWidth,';
+      buildSpec += 'height=testheight,';
+      buildSpec += 'left=testLeft,';
+      buildSpec += 'top=testTop,';
+      buildSpec += 'location=testLocation,';
+      buildSpec += 'channelmode=testChannelmode,';
+      buildSpec += 'fullscreen=testFullscreen,';
+      buildSpec += 'menubar=testMenubar,';
+      buildSpec += 'resizable=testResizable,';
+      buildSpec += 'scrollbars=testScrollbars,';
+      buildSpec += 'status=testStatus,';
+      buildSpec += 'titlebar=testTitlebar,';
+      buildSpec += 'toolbar=testToolbar';
+      expect( specsText ).toEqual( buildSpec );
+
+      expect( wnpToggleOpenClose ).toEqual( 'testTrue' );
+      expect( wnpAutoUpdate ).toEqual( 'testwnpAutoUpdate' );
+      expect( wnpTitle ).toEqual( 'testwnpTitle' );
+
+    });
+  });
+});
+
+
+
+
+describe('Directive: wnpPopup; attributes window parameter passings with interpolation', function () {
+  var wnpOpenServiceMock;
+  var wnpConfig;
+  var scope = {};
+  var element;
+  // --- parameter values for the popWdwfnc() method call ---
+  var url;
+  var winName;
+  var specsText;
+  var wnpToggleOpenClose;
+  var wnpAutoUpdate;
+  var wnpTitle;
+  var closingFnc;
+
+  // load the controller's module
+  beforeEach(module('windowsPopup'));
+
+  // --- Craete Mocks ---
+  beforeEach(function() {
+    wnpOpenServiceMock = {};
+    wnpOpenServiceMock.popWdwfnc = function( urlPar, winNamePar, specsTextPar, wnpToggleOpenClosePar, wnpAutoUpdatePar, wnpTitlePar, closingFncPar ) {
+      console.log('popWdwfnc() was called');
+      url              = urlPar;
+      winName          = winNamePar;
+      specsText        = specsTextPar;
+      wnpToggleOpenClose = wnpToggleOpenClosePar;
+      wnpAutoUpdate    = wnpAutoUpdatePar;
+      wnpTitle         = wnpTitlePar;
+      closingFnc       = closingFncPar;
+    };
+    module(function ($provide) {
+      $provide.value('wnpOpenService', wnpOpenServiceMock);
+    });
+  });
+  // -- Inject needed services --
+  beforeEach(inject(function ($injector, $compile, $rootScope) {
+    scope = $rootScope.$new(); 
+    wnpConfig = $injector.get('wnpConfig');
+    element = angular.element('<wnp-popup  url="{{testUrl}}" wnp-title="{{testwnpTitle}}" \
+      wnp-toggle-open-close="{{testToogleOpen}}" \
+      wnp-auto-update="testwnpAutoUpdate"  \
+      width="testWidth" \
+      height="testheight" \
+      left="testLeft" \
+      top="testTop" \
+      location="testLocation" \
+      channelmode="testChannelmode" \
+      fullscreen="testFullscreen" \
+      menubar="testMenubar" \
+      resizable="testResizable" \
+      scrollbars="testScrollbars" \
+      status="testStatus" \
+      titlebar="testTitlebar" \
+      toolbar="testToolbar" \
+      >Testing Pre-defined Win</wnp-popup>');
+    $compile(element)(scope);
+    scope.$digest();
+
+    spyOn(wnpOpenServiceMock, 'popWdwfnc').and.callThrough();
+  }));
+
+  describe('wnpPopup, wnpName is NOT specified, but we we still should->', function() {
+
+    it ('Should get the default parameter values when calling popWdwfnc()', function() {
+
+      scope.testUrl = 'testUrl';
+      scope.testwnpTitle = 'testwnpTitle';
+      scope.testToogleOpen = 'testTrue';
+
+      element.triggerHandler('click');
+
+      var defaultParams = wnpConfig.getDefaultWindowParams();
+      var preDefWindowP = wnpConfig.getPreWindow('winOne');
+
+      expect( url ).toEqual( 'testUrl' );
+      expect( winName ).toEqual( defaultParams.wnpName );
+      
+//      console.log(specsText);      
+      var buildSpec = 'width=testWidth,';
+      buildSpec += 'height=testheight,';
+      buildSpec += 'left=testLeft,';
+      buildSpec += 'top=testTop,';
+      buildSpec += 'location=testLocation,';
+      buildSpec += 'channelmode=testChannelmode,';
+      buildSpec += 'fullscreen=testFullscreen,';
+      buildSpec += 'menubar=testMenubar,';
+      buildSpec += 'resizable=testResizable,';
+      buildSpec += 'scrollbars=testScrollbars,';
+      buildSpec += 'status=testStatus,';
+      buildSpec += 'titlebar=testTitlebar,';
+      buildSpec += 'toolbar=testToolbar';
+      expect( specsText ).toEqual( buildSpec );
+
+      expect( wnpToggleOpenClose ).toEqual( 'testTrue' );
+      expect( wnpAutoUpdate ).toEqual( 'testwnpAutoUpdate' );
+      expect( wnpTitle ).toEqual( 'testwnpTitle' );
+
+    });
+  });
+});
 
 
 
@@ -635,6 +844,7 @@ describe('Directive: wnpModel', function () {
       window.$$$shareData = null;
       expect( window.opener.$$$shareData.DATA ).toBeTruthy();
       expect( window.opener.$$$shareData.CONFIG ).toBeTruthy();
+      expect( window.opener.$$$shareData.CONFIG.wnpTitle ).toEqual('TestTitle');
 
       wnpFromParent.isData = true;
       spyOn(wnpFromParent, 'get').and.returnValue( window.opener.$$$shareData.DATA );
