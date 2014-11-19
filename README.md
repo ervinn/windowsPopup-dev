@@ -5,8 +5,9 @@ This project is an application skeleton/demo for a typical usage of  [windowsPop
 
 This web app. also contains the **Development Environment** of  [windowsPopup AngularJS Module](https://github.com/ervinn/windowsPopup) .
 
+To download the [latest stable Development Environment (deta v0.0.3) click here](https://github.com/ervinn/windowsPopup-dev/tree/v0.0.3)
 
-#### This Version -> beta 0.0.3 -(Released on 2014-11-19)
+#### Next Version -> beta 0.0.4 -(Released NOT YET)
 
 -----
 #####New in v0.0.3 :
