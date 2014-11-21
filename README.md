@@ -10,6 +10,10 @@ To download the [latest stable Development Environment (deta v0.0.3) click here]
 #### Next Version -> beta 0.0.4 -(Released NOT YET)
 
 -----
+#####New in v0.0.4 :
+- Two new optional attributes are added to `wnp-popup` directive. Those are `wnp-on-open` and `wnp-on-close`. Now it is possible to add two callback functions, the function specified in `wnp-on-open` will be called when your window is opened, and the function in `wnp-on-close` will be called when your window is closed. Usage : ...  `wnp-on-open="yourOnOpenFnc(wnpName)" ... wnp-on-close="yourOnCloseFnc(wnpName)" `. Note : you need to use `wnpName` so the Window name will be passed in to your callback. The spelling is important for `wnpName` but the function name can be your choise.
+
+-----
 #####New in v0.0.3 :
 - Made data binding bi-directional. Now when parent updates model data that is linked to child model, the child model is updated automatically.
 - Rename directives and services names. All names are prefixed with `wnp-*` .
