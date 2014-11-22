@@ -17,8 +17,8 @@
 angular
   .module('windowsPopup', ['windowsPopupConfig']) 
   .constant('wnpContans', {
-    'version': '0.0.3',
-    'release_date' : '2014-11-19',
+    'version': '0.0.4',
+    'release_date' : '2014-11-21',
     'debugMode' : false
    })
   .config( function (wnpContans) {
@@ -119,7 +119,7 @@ angular
     };
 
     service.notDefined = function( val ) {
-      if ( typeof val === 'undefined' || val === null) {
+      if ( typeof val === 'undefined' || val === null || val === '') {
         return true;
       } else {
         return false;
@@ -139,12 +139,15 @@ angular
       var service = {};
       service.isData = false;
       if ( service.isData === false) {
-
           if ( $window.opener && $window.opener !== null && $window.opener.$$$shareData ) {
             shareData = $window.opener.$$$shareData;
             service.isData = true;
+            // -- Call the onOpen fnc --
+            if ( shareData.CONFIG  && shareData.CONFIG.wnpOnOpen ) {
+              shareData.CONFIG.wnpOnOpen( shareData.CONFIG.wnpName );
+            }
           }
-          
+
           // -- For IE closing function may need to be from the Parent
           if ( ! $window.onbeforeunload ) {
             if ( $window.opener && $window.opener !== null && $window.opener.$$$onCloseingFnc ) {
@@ -168,15 +171,15 @@ angular
       /**
        * -- This is called from the Popup service, when the window is opened. --
        */
-      service.setDataToChild = function(closeCallBack, wnpAutoUpdate, wnpTitle) {
+      service.setDataToChild = function(wnpAutoUpdate, CONFIG) {
           var childOnCloseFnc = function() {
-              closeCallBack();
+              CONFIG.wnpOnClose();
           };
           var childOnCloseFncWithWarning = function() {
-              closeCallBack();
+              CONFIG.wnpOnClose();
             return 'This Popup window can not be reloaded. If you want to Exit, that is okay, go ahead.';
           };
-          $window.$$$shareData = wnpToChild.applyAndGetDataForChild(wnpAutoUpdate, wnpTitle);  
+          $window.$$$shareData = wnpToChild.applyAndGetDataForChild(wnpAutoUpdate, CONFIG);  
           $window.$$$onCloseingFnc = childOnCloseFnc;
       };
       return service;
@@ -195,7 +198,7 @@ angular
       var service = {};
 
 
-      service.applyAndGetDataForChild = function(wnpAutoUpdate, wnpTitle) {
+      service.applyAndGetDataForChild = function(wnpAutoUpdate, CONFIG) {
         var ret = {};
         ret.DATA = {};
         ret.CONFIG = {};
@@ -206,7 +209,7 @@ angular
 	        inDta.wnpAutoUpdate = wnpAutoUpdate;
           ret.DATA[inDta.name] = inDta;
         }
-        ret.CONFIG.wnpTitle = wnpTitle;
+        ret.CONFIG = CONFIG;
         return ret;
       };
 
@@ -227,8 +230,11 @@ angular
             };
             // --- Data Bind from Parent to Child --
             scope.$watch(angModel, function(newValue, oldValue) {
-              if (newValue != oldValue) {
-                inDta.updateChildfnc(newValue);
+              try {
+                if (newValue != oldValue) {
+                  inDta.updateChildfnc(newValue);
+                }
+              } catch(err) {
               }
             });
           }
@@ -282,7 +288,7 @@ angular
        * Open the popup Window
        * @return true if the window was opened 
        */
-      service.popWdwfnc = function( url, wnpName, specsText, wnpToggleOpenClose, wnpAutoUpdate, wnpTitle, closeCallBack) {
+      service.popWdwfnc = function( url, wnpName, specsText, wnpToggleOpenClose, wnpAutoUpdate, CONFIG) {
         var ret = false;  // -- return value
 
         var currWind = this.popWindows[wnpName];
@@ -302,10 +308,11 @@ angular
             $window.alert('Dialog Window \"'+wnpName+'\" is already open. Close it to open a new one.'); 
           }          
         } else {
+          // --- Set the data to Child --
+          wnpFromParent.setDataToChild(wnpAutoUpdate, CONFIG);
+
           // --- Open Child Window ---
           currWind.popWdw = $window.open( url, wnpName, specsText, true );
-          // --- Set the data to Child --
-          wnpFromParent.setDataToChild(closeCallBack, wnpAutoUpdate, wnpTitle);
 
           currWind.popWdw.blur();
           currWind.popWdw.focus();
@@ -322,13 +329,17 @@ angular
   /**
    * This is the directive to popup a window with the left mouse click 
    */       
-  .directive('wnpPopup', ['$window', 'wnpOpenService', 'wnpConfig', 'wnpUtil', function ($window, wnpOpenService, wnpConfig, wnpUtil) {
+  .directive('wnpPopup', ['$window', '$parse', 'wnpOpenService', 'wnpConfig', 'wnpUtil', function ($window, $parse, wnpOpenService, wnpConfig, wnpUtil) {
     var ret = {};
 
     ret.restrict = 'EA';
     ret.template = '<span class=""/><a ng-transclude></a>';
     ret.replace  = false;
     ret.transclude = true;
+    ret.scope = { 
+          wnpOnOpen : '&',
+          wnpOnClose: '&'
+        };
     ret.link = function (scope, elem, attrs) {
         var iconElem = elem.children('span');
         elem.css({ 'cursor': 'pointer' });
@@ -342,6 +353,33 @@ angular
           scope.$apply();
 
           var params = prepareParameters(attrs, elem);
+          var wnpOnOpen  = scope.wnpOnOpen;
+          var wnpOnClose = scope.wnpOnClose;
+          var CONFIG = {};
+          CONFIG.wnpName  = params.wnpName;
+          CONFIG.wnpTitle = params.wnpTitle;
+          CONFIG.wnpOnClose =  function () {
+            // -- Note the remove MUST be first ---
+            iconElem.removeClass( wnpConfig.winOpenSignCssClass );
+            iconElem.addClass   ( wnpConfig.popupLinkCssClass ); 
+
+            // --- Call the User CallBack --
+            if (wnpOnClose) {
+              wnpOnClose({wnpName : params.wnpName});
+              scope.$apply();
+            }
+          }; 
+          CONFIG.wnpOnOpen = function () {
+            // -- Note the remove MUST be first ---
+            iconElem.removeClass( wnpConfig.popupLinkCssClass ); 
+            iconElem.addClass   ( wnpConfig.winOpenSignCssClass );
+
+            // --- Call the User CallBack --
+            if (wnpOnOpen) {
+              wnpOnOpen({wnpName : params.wnpName});
+              scope.$apply();
+            } 
+          };
 
           // --- Call a service to difplay the popup  
           var ret = wnpOpenService.popWdwfnc( 
@@ -350,17 +388,10 @@ angular
                                   params.specsText, 
                                   params.wnpToggleOpenClose,
                                   params.wnpAutoUpdate,
-                                  params.wnpTitle,
-                                  function () {
-                                    // -- Note the remove MUST be first ---
-                                    iconElem.removeClass( wnpConfig.winOpenSignCssClass );
-                                    iconElem.addClass   ( wnpConfig.popupLinkCssClass ); 
-                                  } );
+                                  CONFIG);
 
           if ( ret === true ) {
-            // -- Note the remove MUST be first ---
-            iconElem.removeClass( wnpConfig.popupLinkCssClass ); 
-            iconElem.addClass   ( wnpConfig.winOpenSignCssClass );
+            console.log('Open successfully');
           }
 
       });
@@ -381,6 +412,7 @@ angular
         var wnpToggleOpenClose = attrs.wnpToggleOpenClose;
         var wnpAutoUpdate      = attrs.wnpAutoUpdate;
         var wnpTitle           = attrs.wnpTitle;
+
         specs.width      = attrs.width;
         specs.height     = attrs.height;
         specs.left       = attrs.left;

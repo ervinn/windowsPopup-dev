@@ -160,50 +160,55 @@
 
      <h4> Build below your own Popup Window :</h4>
 
-     <table width="100%" border="0">
+     <table width="100%" border="0" ng-controller="buildYourPopupCtrl">
+     <tr>
+       <td colspan="3" align="center">
+        <div  ng-show="isOpen"><font color="red"><b><u>Your Window is opened.</u></b></font></div>
+       </td>
+     </tr>
       <tr> 
         <td>wnp-name :</td>
-        <td> <input type="text" ng-model="wnpName" /> </td>
+        <td> <input type="text" ng-model="wnpName" ng-disabled="isOpen" ng-style="inputStyle"  /> </td>
         <td> Does not specify the title of the new window. </td> 
       </tr>
       <tr>
         <td>url :</td>
-        <td><input type="text" ng-model="wnpUrl" /> </td> 
+        <td><input type="text" ng-model="wnpUrl" ng-disabled="isOpen" ng-style="inputStyle" /> </td> 
         <td></td>
       </tr>
       <tr>
         <td>wnp-title :</td>
-        <td><input type="text" ng-model="wnpTitle" /> </td>
+        <td><input type="text" ng-model="wnpTitle" ng-disabled="isOpen" ng-style="inputStyle" /> </td>
         <td>This does specify the title of the new window.</td>
       </tr>
       <tr>
         <td>wnp-toggle-open-close :</td>
-        <td><input type="checkbox" ng-model="wnpToggleOpenClose" ng-true-value="true" ng-false-value="false" /> </td>
+        <td><input type="checkbox" ng-model="wnpToggleOpenClose" ng-true-value="true" ng-false-value="false" ng-disabled="isOpen" /> </td>
         <td>Second click will close the window, if checked.</td>
       </tr>
       <tr>
         <td>wnp-auto-update :</td>
-        <td><input type="checkbox" ng-model="wnpAutoUpdate" ng-true-value="true" ng-false-value="false" /> </td>
+        <td><input type="checkbox" ng-model="wnpAutoUpdate" ng-true-value="true" ng-false-value="false" ng-disabled="isOpen" /> </td>
         <td>The Parent automatically updated when Child changes, if checked. </td>
       </tr>
       <tr>
         <td>width :</td>
-        <td><input type="number" ng-model="wnpWidth" /> </td>
+        <td><input type="number" ng-model="wnpWidth"  ng-disabled="isOpen" ng-style="inputStyle" /> </td>
         <td>Min. value is 100 </td>
       </tr>
       <tr>
         <td>height :</td>
-        <td><input type="number" ng-model="wnpHeight" /> </td>
+        <td><input type="number" ng-model="wnpHeight"  ng-disabled="isOpen" ng-style="inputStyle" /> </td>
         <td>Min. value is 100 </td>
       </tr>
       <tr>
         <td>left :</td>
-        <td><input type="number" ng-model="wnpLeft" /> </td>
+        <td><input type="number" ng-model="wnpLeft"  ng-disabled="isOpen" ng-style="inputStyle" /> </td>
         <td> The left position of the window. Negative values not allowed.</td>
       </tr>       
       <tr>
         <td>top :</td>
-        <td><input type="number" ng-model="wnpTop" /> </td>
+        <td><input type="number" ng-model="wnpTop" ng-disabled="isOpen" ng-style="inputStyle" /> </td>
         <td> The top position of the window. Negative values not allowed. </td>
       </tr>      
       <tr>
@@ -218,6 +223,8 @@
                      wnp-toggle-open-close="{{wnpToggleOpenClose}}"
                      left="{{wnpLeft}}"
                      top="{{wnpTop}}"
+                     wnp-on-open="onOpen(wnpName)"
+                     wnp-on-close="onClose(wnpName)"
                      >Click this.</wnp-popup>
         </td>
       </tr>
