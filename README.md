@@ -12,6 +12,7 @@ To download the [latest stable Development Environment (deta v0.0.3) click here]
 -----
 #####New in v0.0.4 :
 - Two new optional attributes are added to `wnp-popup` directive. Those are `wnp-on-open` and `wnp-on-close`. Now it is possible to add two callback functions, the function specified in `wnp-on-open` will be called when your window is opened, and the function in `wnp-on-close` will be called when your window is closed. Usage : ...  `wnp-on-open="yourOnOpenFnc(wnpName)" ... wnp-on-close="yourOnCloseFnc(wnpName)" `. Note : you need to use `wnpName` so the Window name will be passed in to your callback. The spelling is important for `wnpName` but the function name can be your choise.
+- BUG Fix : When the Child window reset by F5 key, now the connections between Child and Parent are not lost.
 
 -----
 #####New in v0.0.3 :
