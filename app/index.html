@@ -158,7 +158,7 @@
      <p></p>
      <hr />
 
-     <h4> Build below your own Popup Window :</h4>
+     <h4> Build below your own Popup Window wnp-popup link :</h4>
 
      <table width="100%" border="0" ng-controller="buildYourPopupCtrl">
      <tr>
@@ -174,7 +174,7 @@
       <tr>
         <td>url :</td>
         <td><input type="text" ng-model="wnpUrl" ng-disabled="isOpen" ng-style="inputStyle" /> </td> 
-        <td></td>
+        <td> <select  ng-model="wnpUrl" ng-options="col for col in wnpUrlList" ng-style="inputStyle"></select></td>
       </tr>
       <tr>
         <td>wnp-title :</td>
@@ -228,6 +228,24 @@
                      >Click this.</wnp-popup>
         </td>
       </tr>
+      <tr>
+        <td colspan="3">
+        <pre> 
+   &lt;wnp-popup url="<b>{{wnpUrl}}</b>"
+                 wnp-name="<b>{{wnpName}}</b>"
+                 wnp-title="<b>{{wnpTitle}}</b>"
+                 width="<b>{{wnpWidth}}</b>"
+                 height="<b>{{wnpHeight}}</b>"
+                 wnp-auto-update="<b>{{wnpAutoUpdate}}</b>"
+                 wnp-toggle-open-close="<b>{{wnpToggleOpenClose}}</b>"
+                 left="<b>{{wnpLeft}}</b>"
+                 top="<b>{{wnpTop}}</b>"
+                 wnp-on-open="<b>onOpen(wnpName)</b>"
+                 wnp-on-close="<b>onClose(wnpName)</b>"
+                 &gt; <b>Click this. </b> &lt;/wnp-popup&gt;
+        </pre>                     
+        </td>
+      </tr>      
       </table>
      <hr />
      <p>

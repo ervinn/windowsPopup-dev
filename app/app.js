@@ -12,6 +12,9 @@ angular.module('app', ['windowsPopup'])
 	$scope.wnpName  = 'WinName';
 	$scope.wnpTitle = 'Popup Window Title';
 	$scope.wnpUrl = 'views/popupWindow.html#/sampleTwo';
+
+	$scope.wnpUrlList = ['views/popupWindow.html#/sampleTwo', 'views/popupWindow.html#/sampleOne', 'views/popupWindow.html#/sampleThree', 'views/popupWindow.html#/sampleFour'];	
+
 	$scope.wnpWidth  = 600;
 	$scope.wnpHeight = 600;
 	$scope.wnpLeft = 10;

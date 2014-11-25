@@ -130,7 +130,7 @@ angular
   })
 
   /**
-   * This ONLY used in the Child window to get the data what the Parent provides
+   * This used Child window to get the data what the Parent provides
    * When the Child window loads, the 'window.opener' object should have the '$$$shareData' property.
    * The parent window puts it for the Child.
    */
@@ -142,6 +142,9 @@ angular
           if ( $window.opener && $window.opener !== null && $window.opener.$$$shareData ) {
             shareData = $window.opener.$$$shareData;
             service.isData = true;
+            // --- Set the fact that Child is loaded ---
+            shareData.CONFIG.isWnpChildLoaded = true;
+
             // -- Call the onOpen fnc --
             if ( shareData.CONFIG  && shareData.CONFIG.wnpOnOpen ) {
               shareData.CONFIG.wnpOnOpen( shareData.CONFIG.wnpName );
@@ -182,6 +185,21 @@ angular
           $window.$$$shareData = wnpToChild.applyAndGetDataForChild(wnpAutoUpdate, CONFIG);  
           $window.$$$onCloseingFnc = childOnCloseFnc;
       };
+
+      /**
+       * -- This is a 'static' method, called by the Parent to check if the Child window loaded ---
+       */
+      service.isChildWindowLoaded =  function(win) {
+        var ret = false;
+        if ( wnpUtil.notDefined(win.opener) === false &&
+             wnpUtil.notDefined(win.opener.$$$shareData) === false &&
+             wnpUtil.notDefined(win.opener.$$$shareData.CONFIG) === false ) {
+
+          ret = win.opener.$$$shareData.CONFIG.isWnpChildLoaded;
+        }
+        return ret;
+      };
+
       return service;
   }])
 
@@ -253,7 +271,7 @@ angular
    * The 'wnpPopup' directive calls this service to open the Child Window, when the user clicks
    * This service keeps references for all opened Child windows 
    */
-  .factory('wnpOpenService', ['$window', 'wnpFromParent', function ($window, wnpFromParent) {
+  .factory('wnpOpenService', ['$window', '$interval', 'wnpFromParent', function ($window,  $interval, wnpFromParent) {
       var service = {
         popWindows : {}
       };
@@ -313,11 +331,31 @@ angular
 
           // --- Open Child Window ---
           currWind.popWdw = $window.open( url, wnpName, specsText, true );
-
           currWind.popWdw.blur();
           currWind.popWdw.focus();
           // --- I reached this far, so the window was opened successfully ---
           ret = true;
+
+          // --- Check if the opened window has windowsPopup Angular Module there ---
+          var loaded;
+          var promize = $interval( function() {
+            loaded = wnpFromParent.isChildWindowLoaded( currWind.popWdw);
+ //           console.log('LODAEDDDDDD', loaded );
+            if (loaded === true ) {
+//                promize.resolve(true);
+              $interval.cancel(promize);
+            }
+          }, 100, 3000/100, false );
+          
+          promize.then(function(result) {
+//            console.log('Promize Result', result);
+            // --- Failed to open in a certain time ---
+            if ( loaded != true ) {
+              $window.alert('WnpPopup Window faild to open. The URL is invalid, and/or AngularJS or windowsPopup module not loaded on the Child Window.');
+              currWind.closeWdwfnc();
+            } 
+            $interval.cancel(promize);
+          });
         }
 
         return ret;
@@ -358,6 +396,7 @@ angular
           var CONFIG = {};
           CONFIG.wnpName  = params.wnpName;
           CONFIG.wnpTitle = params.wnpTitle;
+          CONFIG.isWnpChildLoaded - false;
           CONFIG.wnpOnClose =  function () {
             // -- Note the remove MUST be first ---
             iconElem.removeClass( wnpConfig.winOpenSignCssClass );
@@ -391,7 +430,7 @@ angular
                                   CONFIG);
 
           if ( ret === true ) {
-            console.log('Open successfully');
+          //  console.log('Open successfully');
           }
 
       });
