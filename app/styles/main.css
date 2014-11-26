@@ -4,6 +4,9 @@ body {
   padding-bottom: 20px;
 }
 
+.ng-valid.ng-dirty { border: solid green 3px; }
+.ng-invalid.ng-dirty { border: solid red 3px; }
+
 /* Everything but the jumbotron gets side spacing for mobile first views */
 .header,
 .marketing,
