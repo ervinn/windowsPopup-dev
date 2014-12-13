@@ -94,7 +94,7 @@ Now browse to the app at `http://localhost:8000/app/index.html`.
 
 ### Running Unit Tests
 
-The angular-seed app comes preconfigured with unit tests. These are written in
+This DEMO app comes preconfigured with unit tests. These are written in
 [Jasmine][jasmine], which we run with the [Karma Test Runner][karma]. We provide a Karma
 configuration file to run them.
 
@@ -124,7 +124,7 @@ npm run test-single-run
 
 ### End to end testing
 
-The angular-seed app comes with end-to-end tests, again written in [Jasmine][jasmine]. These tests
+This DEMO app comes with end-to-end tests, again written in [Jasmine][jasmine]. These tests
 are run with the [Protractor][protractor] End-to-End test runner.  It uses native events and has
 special features for Angular applications.
 
