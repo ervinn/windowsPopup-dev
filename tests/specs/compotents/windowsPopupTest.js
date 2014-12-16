@@ -77,6 +77,7 @@ describe('Factory: wnpFromParent', function () {
   var windowMock;
   var wnpFromParent;
   var injector;
+  var CONFIG;
 
   // load the controller's module
   beforeEach(module('windowsPopup'));
@@ -89,6 +90,7 @@ describe('Factory: wnpFromParent', function () {
       $provide.value('$window', windowMock);
     });
 
+    CONFIG = {};
   });
   // -- Inject needed services --
   beforeEach(inject(function ($injector, $rootScope) {
@@ -100,9 +102,9 @@ describe('Factory: wnpFromParent', function () {
   }));
   describe('Child window should get the SharedData', function() { 
 
-    it ('Browsers should find sharedData, in window.opener object', function() {
+    it ('Browsers should find sharedData in window.opener object', function() {
       // --- Set Data for the Child Window --
-      windowMock.opener.$$$shareData = wnpToChild.applyAndGetDataForChild(true);
+      windowMock.opener.$$$shareData = wnpToChild.applyAndGetDataForChild(true, CONFIG);
 
       // --- Inject here, the 'window' object must be set ---
       wnpFromParent = injector.get('wnpFromParent');
@@ -883,7 +885,9 @@ describe('Directive: wnpModel', function () {
       // -- Simulate Child window rendering --
       elementChild = angular.element('<input type="text" wnp-model="item_one" ng-model="ChildData" />');
       compile(elementChild)(scopeChild);
-//      scopeChild.$digest();
+      timeout(function () {      
+        scopeChild.$apply();
+      }, 300);
 
       expect( wnpFromParent.get).toHaveBeenCalled();
       expect( wnpFromParent.isData ).toBeTruthy();

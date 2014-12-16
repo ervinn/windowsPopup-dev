@@ -39,8 +39,27 @@
 
     <h1>Windows Popup AngularJS Module</h1>
 
+    <table width="90%">
+      <tr>
+        <td>
+          <h4>
+            <a href="https://github.com/ervinn/windowsPopup">Download From GitHub.</a>
+          </h4>
+          <h4>
+            <a href="https://github.com/ervinn/windowsPopup-dev">Download the Development Environment from GitHub.</a>
+          </h4>
+        </td>
 
-   <h3> Child, Parent data binding Demo :</h3>
+        <td align="right">
+          <img  align="right" width="100" height="100" src="images/wnp-logo.jpg">
+        </td>
+
+      </tr>
+    </table>
+
+    </div>
+
+    <h3> Child, Parent data binding Demo :</h3>
 
      <h4> Description :</h4>
 
@@ -54,8 +73,8 @@
      <p>      
         Data binding from Child to Parent is managed by the <b>'wnp-model'</b> directive. This directive needs to be added as an attribute to an HTML tag where <b>'ng-module'</b> is present, in both Parent and Child. The <b>'wnp-model'</b> attribute is used to link Child to parent. 
      </p>
+
      <p>
-     
      For example, In the parent window you have :
      <pre> &lt;input type="text" wnp-model="<b>item_one</b>" ng-model="parentData.dat" /&gt; </pre>
      In the Child window you have :
@@ -75,9 +94,9 @@
 
      At the time of clicking on that link, the Parent model data that was marked for linking is copied to the child windows encapsulated in a shareble object. The sharable object contains callback functions that will be executed and updates the Parents model at the time when the user changes the child linked model data.
      </p>
+	 <p>
       You can have only one popup window open with the same window name, see above (<b>wnp-name="popupWindow"</b>). If you want to open more windows, use a different wnp-name. 
-     <p>
-
+     
      </p>
       <h4> Some sample links to open popup windows :</h4>
       <p> Click the following link to open the popup. Click again to close : 
@@ -135,7 +154,13 @@
                        >Win 6, the Child will be parent.</wnp-popup>
 
       </p>
+      
+      <wnp-pop url="views/sampleOne.html">
+       <h4>
+       Use the right mouse click over the input fields to Open a Modal to change values.
+       </h4>
 
+      
      <div>
        <input type="text" wnp-model="item_one" ng-model="rnParentData.dat" />
        This is interpolated " {{ rnParentData.dat }} " data.
@@ -154,7 +179,9 @@
                        wnp-toggle-open-close="true"
                        >Win 1, as a button </button>
      <br />
-     </p>
+    
+    </wnp-pop>
+
      <p></p>
      <hr />
 
@@ -274,7 +301,7 @@
      </p>
 
  </div>
-</div>
+
 
     <!-- build:js(.) scripts/oldieshim.js -->
     <!--[if lt IE 9]>
