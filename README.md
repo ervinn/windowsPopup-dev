@@ -16,6 +16,7 @@ To download the [latest stable Development Environment (deta v0.0.3) click here]
 - Now, Parent window checks if the Child window loaded the AngularJS and windowPopup modules, before the `wnpOnOpen(wnpName)' method is called. If those are not loaded after a certain time interval, then an alert error mesage is presented, and the popup window is closed. The time interval will be configurable. 
 - Add E2E (end to end) test cases for the Demo program using [Protractor][protractor]. These tests
 are run with the [Protractor][protractor] End-to-End test runner.
+- Add new directive `wnp-pop`. Sometimes you do not want to open a new browser window, just a simple Modal window would do. The `wnp-pop` directive is similar to `wnp-popup`, but it opens a Modal window not a new browser window. The good thing is that you can use the same html partial, whatever is in the url attribute will be used. The `wnp-pop` is using a new attribute, that is `wnp-pop-name`, to use pre-defined Modal windows. The main difference is that the `wnp-pop` directive open the Modal window by the right mouse click. This way, this new directive could also be used to open a context menu for you application. ( TODO: After this we will add a directive to open a drop down menu by right click, we plan to call it `wnp-pop-dn` or `wnp-pop-down` .) So you will have the option to have a simple drop down or you you can have a Modal window for more complex context menu, depending of your needs.
 
 -----
 #####New in v0.0.3 :
@@ -94,7 +95,7 @@ Now browse to the app at `http://localhost:8000/app/index.html`.
 
 ### Running Unit Tests
 
-The angular-seed app comes preconfigured with unit tests. These are written in
+This DEMO app comes preconfigured with unit tests. These are written in
 [Jasmine][jasmine], which we run with the [Karma Test Runner][karma]. We provide a Karma
 configuration file to run them.
 
@@ -124,7 +125,7 @@ npm run test-single-run
 
 ### End to end testing
 
-The angular-seed app comes with end-to-end tests, again written in [Jasmine][jasmine]. These tests
+This DEMO app comes with end-to-end tests, again written in [Jasmine][jasmine]. These tests
 are run with the [Protractor][protractor] End-to-End test runner.  It uses native events and has
 special features for Angular applications.
 
