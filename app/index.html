@@ -57,6 +57,8 @@
       </tr>
     </table>
 
+    <wnp-version></wnp-version>
+
     </div>
 
     <h3> Child, Parent data binding Demo :</h3>
@@ -68,13 +70,21 @@
      </p>
      <p>   
         For each browser window AngularJs has to be loaded separatelly. You need to load the same <b>"WindowsPopup.js" </b> file in both the Parent and the Child window. 
-        The <b>'windowsPopup'</b> module helps you to communicate between the Child and Parent window.
+        The <b>'windowsPopup'</b> module helps you to communicate between the Child and Parent window, by using the <b>wnp-popup</b> directive. You use the left mouse click to open a new window. See below for an example usage.
      </p>
+     <wnp-pop url="views/sampleOne.html">
+     <p>
+        Sometimes you may not want to open a new browser window; in that case you can open a Bootstrap Modal window. For Modal windows the Child(Modal) and Parent are running on the same AngularJS load environment, so no need to load the <b>"WindowsPopup.js" </b> file again for the Child(Modal) window. To open a Modal window, use the <b>wnp-pop</b> directive. 
+        (You can try it by doing a right mouse click, now. )
+        You use the right mouse click to open a Modal window.        
+     </p>
+     </wnp-pop>
      <p>      
         Data binding from Child to Parent is managed by the <b>'wnp-model'</b> directive. This directive needs to be added as an attribute to an HTML tag where <b>'ng-module'</b> is present, in both Parent and Child. The <b>'wnp-model'</b> attribute is used to link Child to parent. 
      </p>
 
      <p>
+     <h4> Description :</h4>
      For example, In the parent window you have :
      <pre> &lt;input type="text" wnp-model="<b>item_one</b>" ng-model="parentData.dat" /&gt; </pre>
      In the Child window you have :
@@ -98,7 +108,12 @@
       You can have only one popup window open with the same window name, see above (<b>wnp-name="popupWindow"</b>). If you want to open more windows, use a different wnp-name. 
      
      </p>
-      <h4> Some sample links to open popup windows :</h4>
+
+     <hr />
+     <wnp-pop url="views/contextMenuOne.html">
+
+      <h4> Some sample links to open popup windows by left click :</h4>
+      <h5> (If you want to open the windows from a Modal context menu then righ click below) </h5>
       <p> Click the following link to open the popup. Click again to close : 
          <wnp-popup url="views/popupWindow.html#/sampleOne"
                        width="450" 
@@ -154,7 +169,8 @@
                        >Win 6, the Child will be parent.</wnp-popup>
 
       </p>
-      
+      </wnp-pop>
+
       <wnp-pop url="views/sampleOne.html">
        <h4>
        Use the right mouse click over the input fields to Open a Modal to change values.

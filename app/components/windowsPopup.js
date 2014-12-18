@@ -26,7 +26,18 @@ angular
       console.log('load windowsPopup AngularJs Module version=('+wnpContans.version+') Release Date('+wnpContans.release_date+')');
     }
   })
-  
+
+.directive('wnpVersion', ['wnpContans', function (wnpContans) {
+    return {
+      restrict: 'AE',
+      compile: function(element, attributes) {
+        var versionText = 'Powered By WNP (WindowsPopup) V:' + wnpContans.version + ' Released on ' + wnpContans.release_date;
+console.log(versionText);
+        element.html(versionText);
+      }
+    }
+  }])
+
   .factory('wnpUtil', function() {
     var service = {};
 
@@ -217,7 +228,7 @@ angular
        */
       service.setDataToModal = function(wnpAutoUpdate, CONFIG) {
         modalData = wnpToChild.applyAndGetDataForChild(wnpAutoUpdate, CONFIG);
-console.log('modalData=', modalData);        
+      
       };
 
 
@@ -648,6 +659,7 @@ console.log('modalData=', modalData);
               // --- Register this element for Modal updtae
               wnpFromParent.registerModalBindingToBeCalled( function() {
                 var shareD = wnpFromParent.getModalData();
+
                 childParentBindingFnc(scope, shareD, popupBindVar, angModel);                
               });
 
@@ -734,11 +746,19 @@ console.log('modalData=', modalData);
 // .filter('unsafe', function($sce) { return $sce.trustAsHtml; })
 
 .directive('wnpPop', ['$http', 'wnpOpenService', 'wnpConfig', function ($http, wnpOpenService, wnpConfig) {
+  var createModalName = function(name) {
+    var ret = name.replace(/\//g, '').replace(/\./g, '');
+    return ret;
+  };
+
+  var modalWind = {};
+
   var ret = {};
   var modelContentUrl = '';
+  var modalName = '';
   var modalW = function() {  return '<!-- Small modal -->' +
 
-'<div class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="false">' +
+'<div class="' + modalName + ' modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="false">' +
   '<div class="modal-dialog modal-sm">' +
     '<div class="wnp-modal modal-content" > ' +
     '<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>' +
@@ -759,19 +779,30 @@ console.log('modalData=', modalData);
   ret.compile = function (element, atttributes) {
 
     modelContentUrl = atttributes.url;
+    modalName = createModalName(modelContentUrl);
 
-    var parent = element.parent();
-    var modalElem = angular.element(modalW());
-    parent.append(modalElem);
+    // --- There should be only one Modal created for each unique urr
+    //     The same Modal window can be opened from different positions --
+    var currWind = modalWind[modalName];
+    // -- Check if the window with that name  is defined or not ---
+    if ( ! currWind ) {
+      // -- Create a new Modal element ---
+      var parent = element.parent();
+      var modalElem = angular.element(modalW());
+      parent.append(modalElem);
+      // -- store it that Modal is created --
+      modalWind[modalName] = modalName;
+    }
+
 
     var linkFunction = function($scope, element, atttributes) {
           element.bind('contextmenu', function () {
+            var name = createModalName(atttributes.url);
             var CONFIG = {};
-            CONFIG.wnpName = 'Modal';
+            CONFIG.wnpName = name;
 
             wnpOpenService.popModalfnc("true", CONFIG);
-
-            element.parent().find('.modal').modal( {'backdrop' : 'static'} );
+            element.parent().find('.'+ name).modal( {'backdrop' : 'static'} );
             return false;
           });
           // element.bind('click', function() {
