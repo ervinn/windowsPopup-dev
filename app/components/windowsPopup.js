@@ -17,8 +17,8 @@
 angular
   .module('windowsPopup', ['windowsPopupConfig']) 
   .constant('wnpContans', {
-    'version': '0.0.4',
-    'release_date' : '2014-12-16',
+    'version': '0.0.5',
+    'release_date' : 'NOT YET',
     'debugMode' : false
    })
   .config( function (wnpContans) {
@@ -31,7 +31,7 @@ angular
     return {
       restrict: 'AE',
       compile: function(element, attributes) {
-        var versionText = 'Powered By WNP (WindowsPopup) V:' + wnpContans.version + ' Released on ' + wnpContans.release_date;
+        var versionText = 'Powered By WNP &#169 (WindowsPopup) V:' + wnpContans.version + ' Released on ' + wnpContans.release_date;
 console.log(versionText);
         element.html(versionText);
       }
@@ -292,7 +292,6 @@ console.log(versionText);
             } 
             // --- updateParent --
             wnpUtil.setToScope(scope, angModel, backMsg);
-
             if ( watchParentFnc ) {
               unwatchParentFnc = watchParentFnc(); // --- Start Watching again, Eliminate circular dependency --
             }
@@ -745,32 +744,14 @@ console.log(versionText);
 
 // .filter('unsafe', function($sce) { return $sce.trustAsHtml; })
 
-.directive('wnpPop', ['$http', 'wnpOpenService', 'wnpConfig', function ($http, wnpOpenService, wnpConfig) {
+.directive('wnpPop', ['wnpUtil', 'wnpOpenService', 'wnpModalConfig', function (wnpUtil, wnpOpenService, wnpModalConfig) {
   var createModalName = function(name) {
     var ret = name.replace(/\//g, '').replace(/\./g, '');
     return ret;
   };
 
   var modalWind = {};
-
   var ret = {};
-  var modelContentUrl = '';
-  var modalName = '';
-  var modalW = function() {  return '<!-- Small modal -->' +
-
-'<div class="' + modalName + ' modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="false">' +
-  '<div class="modal-dialog modal-sm">' +
-    '<div class="wnp-modal modal-content" > ' +
-    '<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>' +
-      '<div ng-include="' + "'" + modelContentUrl + "'"  + '">' +
-        '<!-- Modal content -->' +
-      '</div>' +
-    '</div>' +
-  '</div>' +
-'</div>' 
-//'<div ng-transclude />'
- };
-
   ret.restrict ='EA';
 //  ret.template = modalW;
 //  ret.replace  = false;
@@ -778,31 +759,75 @@ console.log(versionText);
 
   ret.compile = function (element, atttributes) {
 
-    modelContentUrl = atttributes.url;
-    modalName = createModalName(modelContentUrl);
+    var modalElementTxt;
+    var smallModalElement = '<!-- Small modal -->' +
+      '<div class="$$$modalName$$$ modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="false">' +
+        '<div class="modal-dialog modal-sm">' +
+          '<div class="wnp-modal modal-content" > ' +
+          '<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>' +
+            '<div ng-include="' + "'" + '$$$modalContentUrl$$$' + "'"  + '">' +
+              '$$$errorMessage$$$' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
 
-    // --- There should be only one Modal created for each unique urr
+    var predefinedUrl;
+    var wnpPopName = atttributes.wnpPopName;
+    if ( wnpPopName ) {
+      modalElementTxt = wnpModalConfig.getPreModalElement(wnpPopName);
+      predefinedUrl   = wnpModalConfig.getPreModalUrl(wnpPopName);
+    } else {
+     wnpPopName = '';
+    }
+    // --- Apply default if needed ---
+    if ( wnpUtil.notDefined(modalElementTxt) ) {
+      modalElementTxt = wnpModalConfig.getDefaultModalElement();
+    }
+
+    var modalContentUrl = atttributes.url;
+    if ( wnpUtil.notDefined(modalContentUrl) ) {
+      modalContentUrl = predefinedUrl;
+      if ( wnpUtil.notDefined(modalContentUrl) ) {
+        modalContentUrl = wnpModalConfig.getDefaultModalUrl();
+      }
+    } 
+    
+    // --- If no Model element and URL was found; Open an Error Modal ---
+    if ( wnpUtil.notDefined(modalElementTxt) || wnpUtil.notDefined(modalContentUrl) ) {
+      modalElementTxt = smallModalElement;
+      modalElementTxt = modalElementTxt.replace('$$$errorMessage$$$','Error, no Modal parameters was found');
+    }
+
+    // --- Create a unique name; there should be one Modal DOM element for a URL and Name --
+    //     This is for identifying the Model Element to open and close ---
+    var uniqueName = createModalName(modalContentUrl) + wnpPopName;
+
+    // --- Subtitute Name and Url in the Element string ---
+    modalElementTxt = modalElementTxt.replace('$$$modalName$$$', uniqueName);
+    modalElementTxt = modalElementTxt.replace('$$$modalContentUrl$$$', modalContentUrl);
+
+    // --- There should be only one Modal created by URL and name for each unique urr
     //     The same Modal window can be opened from different positions --
-    var currWind = modalWind[modalName];
+    var currWind = modalWind[uniqueName];
     // -- Check if the window with that name  is defined or not ---
     if ( ! currWind ) {
       // -- Create a new Modal element ---
       var parent = element.parent();
-      var modalElem = angular.element(modalW());
+      var modalElem = angular.element(modalElementTxt);
       parent.append(modalElem);
       // -- store it that Modal is created --
-      modalWind[modalName] = modalName;
+      modalWind[uniqueName] = uniqueName;
     }
 
 
     var linkFunction = function($scope, element, atttributes) {
           element.bind('contextmenu', function () {
-            var name = createModalName(atttributes.url);
             var CONFIG = {};
-            CONFIG.wnpName = name;
+            CONFIG.wnpName = uniqueName;
 
             wnpOpenService.popModalfnc("true", CONFIG);
-            element.parent().find('.'+ name).modal( {'backdrop' : 'static'} );
+            element.parent().find('.'+ uniqueName).modal( {'backdrop' : 'static'} );
             return false;
           });
           // element.bind('click', function() {

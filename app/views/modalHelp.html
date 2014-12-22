@@ -1,0 +1,59 @@
+
+    <h4 class="modal-title"> Modal usega Help :</h4>
+    <p>
+    The WNP Modal window is different from opening a new browser window. When the Modal window is open the main window can not be accessed.
+    Other difference is that the Modal window content are loaded when the page loads, while when a new browser window is opened that content is loaded when the link is clicked.    
+    </p>
+    <p>
+    Feel free to use the two predefined Modal window ("large", and "small"). <br />
+    See below how you would normaly use a Modal window with WNP.
+    </p>
+    <pre>
+      &lt;wnp-pop url="<b>views/modalHelp.html</b>" wnp-pop-name="<b>large</b>"&gt;  <wnp-pop url="views/modalNesting.html" wnp-pop-name="small">
+      . . .
+      <i>Right click here will open the Modal Window</i> 
+      . . .
+     </wnp-pop> &lt;/wnp-pop&gt;
+    </pre>
+    <p>
+    Usually, you need to provide two values, those are the URL of the Modal window content, and a name of the Modal window. <br />
+    We predefined two Modal windows you can use. The one is you can see above, and this is the one is used by this Modal window. It's called "<b><i>large</i></b>".
+    The other one is called "<b><i>small</i></b>". You can see the name is refering to the Modal window size.
+    </p>
+    <p>
+    If those two windows are not enough, you can create your own. Look at the Bootstrap Modal documentation for more information.
+    <a href="http://getbootstrap.com/javascript/#modals"> http://getbootstrap.com/javascript/#modals </a> . <br />
+    You can predefine Modal window by modifying 'WindowsPopupConfig.js' file.
+    </p>
+    <p>
+    When you create a new Modal window there are some rules that you need to follow. See below how this Modal window is predefined in <b>'WindowsPopupConfig.js'</b> file:
+    <pre>
+    var largeModalElement = '&lt;!-- Large modal --&gt;' +
+  '&lt;div class="<b>$$$modalName$$$</b> modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="false"&gt;' +
+    '&lt;div class="modal-dialog modal-lg"&gt;' +
+      '&lt;div class="wnp-modal modal-content" &gt; ' +
+      '&lt;button type="button" class="close" data-dismiss="modal"&gt;&lt;span aria-hidden="true"&gt;&times;&lt;/span&gt;&lt;span class="sr-only"&gt;Close&lt;/span&gt;&lt;/button&gt;' +
+        '&lt;div ng-include="' + "'" + '<b>$$$modalContentUrl$$$</b>' + "'"  + '"&gt;' +
+          '&lt;!-- Modal content --&gt;' +
+        '&lt;/div&gt;' +
+      '&lt;/div&gt;' +
+    '&lt;/div&gt;' +
+  '&lt;/div&gt;';    
+    </pre>
+    There are two placeholders you MUST have in your Modal DOM element. The <b>windowsPopup</b> module will replace those to the proper values. 
+    <ul>
+      <li> <b><i>$$$modalName$$$</i></b> --&gt; This is needed to add there a unique name that identifies that Modal. This unique name is used to popup Modal window.
+    Also unique name is needed to make sure that only one "Modal Element" is added to the page. 
+    You can have many "wnp-pop" directive refering to the same URL and same wnp-pop-name on the same page. At the first occurance the "Model Element" is added, but not at the subsequence ones.
+    The unique name is created by the url and the wnp-pop-name. In the above example the unique name would be <i>viewsmodalHelphtmllarge</i> . See that the slash and period characters are removed.
+      </li>
+      <li> <b><i>$$$modalContentUrl$$$</i></b>  --&gt; This is the URL that will be pulled in to the page at the time when the page is loaded. 
+      Note, when you do the right click the content already loaded and no network access is needed. 
+      That is why this Modal display faster to display then when the same URL is opened by the <b> wnp-popup </b> directive, where a new browser window is opened.
+      </li>
+    </ul>
+   
+    </p>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+    </div>

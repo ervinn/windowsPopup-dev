@@ -817,9 +817,15 @@ describe('Directive: wnpModel', function () {
   var scopeChild = {};
   var elementParent;
   var elementChild;
+  var elementChildButton;
   var compile;
   var window;
   var timeout;
+  var moveSharedDataFnc = function(window) {
+      window.opener = {};
+      window.opener.$$$shareData = window.$$$shareData;
+      window.$$$shareData = null;
+  };
 
   // load the controller's module
   beforeEach(module('windowsPopup'));
@@ -827,6 +833,11 @@ describe('Directive: wnpModel', function () {
   beforeEach(inject(function ($injector, $compile, $rootScope, $window, $timeout) {
     timeout = $timeout;
     window = $window;
+    window = $window;
+    if (window.opener) {
+      if (window.opener.$$$shareData) delete window.opener.$$$shareData;
+      delete window.opener;
+    }   
     scopeParent = $rootScope;
     scopeChild  = $rootScope.$new(true);
     wnpUtil  = $injector.get('wnpUtil');
@@ -864,16 +875,14 @@ describe('Directive: wnpModel', function () {
       var CONFIG = {};
       CONFIG.wnpTitle = 'TestTitle';
       CONFIG.wnpOnOpen = function(){ console.log('closing fnc. called'); };
-      wnpFromParent.setDataToChild(false, CONFIG);
+      wnpFromParent.setDataToChild(true, CONFIG);
       expect( wnpFromParent.isData ).toBeFalsy();
       expect( window.$$$shareData.DATA ).toBeTruthy();
       expect( window.$$$shareData.CONFIG ).toBeTruthy();
       expect( window.opener ).toBeFalsy();
       // --- Move shared data to window.opener --
+      moveSharedDataFnc(window);
 
-      window.opener = {};
-      window.opener.$$$shareData = window.$$$shareData;
-      window.$$$shareData = null;
       expect( window.opener.$$$shareData.DATA ).toBeTruthy();
       expect( window.opener.$$$shareData.CONFIG ).toBeTruthy();
       expect( window.opener.$$$shareData.CONFIG.wnpTitle ).toEqual('TestTitle');
@@ -881,27 +890,175 @@ describe('Directive: wnpModel', function () {
       wnpFromParent.isData = true;
       spyOn(wnpFromParent, 'get').and.returnValue( window.opener.$$$shareData.DATA );
       spyOn(wnpFromParent, 'getWnpTitle').and.returnValue( window.opener.$$$shareData.CONFIG.wnpTitle );
-
+      
+      expect( scopeChild.ChildData ).toBeFalsy();
       // -- Simulate Child window rendering --
       elementChild = angular.element('<input type="text" wnp-model="item_one" ng-model="ChildData" />');
       compile(elementChild)(scopeChild);
-      timeout(function () {      
+      timeout(function () {
         scopeChild.$apply();
-      }, 300);
+      }, 0);
 
       expect( wnpFromParent.get).toHaveBeenCalled();
       expect( wnpFromParent.isData ).toBeTruthy();
       expect( scopeChild.ChildData ).toEqual("123");
 
-      // timeout(function() {
-      //   // -- Change the Child ---
-      //   scopeChild.ChildData = "NewVal";
-      //   scopeChild.$digest();
-      //   // -- Parent should change too --
-      //   expect( scopeParent.parentData ).toEqual("NewVal");
-      //   console.log(scopeParent.parentData);              
-      // }, 500);
-      // timeout.flush();
+    });
+
+    it('Should get the data from Child scope to the Parent scope AUTOMATICALLY.', function(){
+      // --- Add parentData scope value ---
+      scopeParent.parentData = "123";
+      expect( wnpToChild.addOneSharedModel).toHaveBeenCalled();
+
+      // -- Simulate the open window click by calling setDataToChild --
+      var CONFIG = {};
+      CONFIG.wnpTitle = 'TestTitle';
+      CONFIG.wnpOnOpen = function(){ console.log('closing fnc. called'); };
+      wnpFromParent.setDataToChild(true, CONFIG); // <--- True means AUTOMATIC
+      expect( wnpFromParent.isData ).toBeFalsy();
+      expect( window.$$$shareData.DATA ).toBeTruthy();
+      expect( window.$$$shareData.CONFIG ).toBeTruthy();
+      expect( window.opener ).toBeFalsy();
+      // --- Move shared data to window.opener --
+      moveSharedDataFnc(window);
+
+      expect( window.opener.$$$shareData.CONFIG.wnpTitle ).toEqual('TestTitle');
+
+      wnpFromParent.isData = true;
+      spyOn(wnpFromParent, 'get').and.returnValue( window.opener.$$$shareData.DATA );
+      spyOn(wnpFromParent, 'getWnpTitle').and.returnValue( window.opener.$$$shareData.CONFIG.wnpTitle );
+
+      expect( scopeChild.ChildData ).toBeFalsy();
+      // -- Simulate Child window rendering --
+      elementChild = angular.element('<input type="text" wnp-model="item_one" ng-model="ChildData" />');
+      compile(elementChild)(scopeChild);
+      timeout(function () {
+        scopeChild.$apply();
+      }, 0);
+
+      expect( wnpFromParent.get).toHaveBeenCalled();
+      expect( wnpFromParent.isData ).toBeTruthy();
+      expect( scopeChild.ChildData ).toEqual("123");
+
+      timeout(function() {
+        // -- Change the Child ---
+        scopeChild.ChildData = "NewVal";
+        scopeChild.$apply();
+        scopeParent.$apply();
+      }, 0);
+      timeout.flush();
+      // -- Parent should change too --
+      expect( scopeChild.ChildData ).toEqual("NewVal");
+      expect( scopeParent.parentData ).toEqual("NewVal");
+
+    });
+
+    it('Should get the data from Child scope to the Parent scope BY CLICKING NOT AUTOMATICALLY.', function(){
+      // --- Add parentData scope value ---
+      scopeParent.parentData = "123";
+      expect( wnpToChild.addOneSharedModel).toHaveBeenCalled();
+
+      // -- Simulate the open window click by calling setDataToChild --
+      var CONFIG = {};
+      CONFIG.wnpTitle = 'TestTitle';
+      CONFIG.wnpOnOpen = function(){ console.log('closing fnc. called'); };
+      wnpFromParent.setDataToChild(false, CONFIG); // <--- false mean NOT AUTOMATIC
+      expect( wnpFromParent.isData ).toBeFalsy();
+      expect( window.$$$shareData.DATA ).toBeTruthy();
+      expect( window.$$$shareData.CONFIG ).toBeTruthy();
+      expect( window.opener ).toBeFalsy();
+      // --- Move shared data to window.opener --
+      moveSharedDataFnc(window);
+
+      expect( window.opener.$$$shareData.CONFIG.wnpTitle ).toEqual('TestTitle');
+
+      wnpFromParent.isData = true;
+      spyOn(wnpFromParent, 'get').and.returnValue( window.opener.$$$shareData.DATA );
+      spyOn(wnpFromParent, 'getWnpTitle').and.returnValue( window.opener.$$$shareData.CONFIG.wnpTitle );
+
+      expect( scopeChild.ChildData ).toBeFalsy();
+      // -- Simulate Child window rendering --
+      elementChild = angular.element('<input type="text" wnp-model="item_one" ng-model="ChildData" />');
+      elementChildButton = angular.element('<button type="button" wnp-update-parent="ALL" >Apply Changes</button>');
+      compile(elementChild)(scopeChild);
+      compile(elementChildButton)(scopeChild);
+      timeout(function () {      
+        scopeChild.$apply();
+      }, 0);
+
+      expect( wnpFromParent.get).toHaveBeenCalled();
+      expect( wnpFromParent.isData ).toBeTruthy();
+      expect( scopeChild.ChildData ).toEqual("123");
+
+      timeout(function() {
+        // -- Change the Child ---
+        scopeChild.ChildData = "NewVal";
+        scopeChild.$apply();
+        scopeParent.$apply();
+      }, 0);
+      timeout.flush();
+      // -- Parent should change too --
+      expect( scopeChild.ChildData ).toEqual("NewVal");
+      expect( scopeParent.parentData ).toEqual("123"); // --- Not YET, not automatic --
+
+      // --- Click the Child Button to Update Parent ---
+      elementChildButton.triggerHandler('click');
+      expect( scopeChild.ChildData ).toEqual("NewVal");
+      expect( scopeParent.parentData ).toEqual("NewVal"); // --- NOW YES, Updated by clicking --
+
+    });
+
+  });
+});
+
+
+
+
+
+describe('Directive: wnpPop', function () {
+  var wnpFromParent;
+  var wnpToChild;
+  var wnpUtil;
+  var wnpOpenService;
+  var scopeParent = {};
+  var scopeChild = {};
+  var elementParent;
+  var elementChild;
+  var compile;
+  var window;
+  var timeout;
+
+  // load the controller's module
+  beforeEach(module('windowsPopup'));
+  // -- Inject needed services --
+  beforeEach(inject(function ($injector, $compile, $rootScope, $window, $timeout) {
+    timeout = $timeout;
+    window = $window;
+    if (window.opener) {
+      if (window.opener.$$$shareData) delete window.opener.$$$shareData;
+      delete window.opener;
+    }      
+    scopeParent = $rootScope;
+    scopeChild  = $rootScope.$new(true);
+    wnpUtil  = $injector.get('wnpUtil');
+    wnpFromParent  = $injector.get('wnpFromParent');
+    wnpToChild     = $injector.get('wnpToChild');
+    wnpOpenService = $injector.get('wnpOpenService');
+   
+    spyOn(wnpToChild, 'addOneSharedModel').and.callThrough();
+
+    elementParent = angular.element('<input type="text" wnp-model="item_one" ng-model="parentData" />');
+    $compile(elementParent)(scopeParent);
+
+  }));
+
+  describe('wnpModel ...', function() {
+    it('Should call wnpToChild.addOneSharedModel', function(){
+
+    });
+
+    it('Should get the data from Parent scope to the Child scope.', function(){
+
 
     });
 

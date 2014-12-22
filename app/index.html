@@ -72,10 +72,10 @@
         For each browser window AngularJs has to be loaded separatelly. You need to load the same <b>"WindowsPopup.js" </b> file in both the Parent and the Child window. 
         The <b>'windowsPopup'</b> module helps you to communicate between the Child and Parent window, by using the <b>wnp-popup</b> directive. You use the left mouse click to open a new window. See below for an example usage.
      </p>
-     <wnp-pop url="views/sampleOne.html">
+     <wnp-pop url="views/modalHelp.html" wnp-pop-name="large">
      <p>
         Sometimes you may not want to open a new browser window; in that case you can open a Bootstrap Modal window. For Modal windows the Child(Modal) and Parent are running on the same AngularJS load environment, so no need to load the <b>"WindowsPopup.js" </b> file again for the Child(Modal) window. To open a Modal window, use the <b>wnp-pop</b> directive. 
-        (You can try it by doing a right mouse click, now. )
+        (You can try it by doing a right mouse click. <b style="color: red"><i> Do a right mouse click here ! </i></b> )
         You use the right mouse click to open a Modal window.        
      </p>
      </wnp-pop>
@@ -110,10 +110,10 @@
      </p>
 
      <hr />
-     <wnp-pop url="views/contextMenuOne.html">
+     <wnp-pop url="views/contextMenuOne.html" wnp-pop-name="small">
 
       <h4> Some sample links to open popup windows by left click :</h4>
-      <h5> (If you want to open the windows from a Modal context menu then righ click below) </h5>
+      <h5> (If you want to open the windows from a Modal context menu then <span style="color: red"> righ click below </span>) </h5>
       <p> Click the following link to open the popup. Click again to close : 
          <wnp-popup url="views/popupWindow.html#/sampleOne"
                        width="450" 
@@ -171,9 +171,9 @@
       </p>
       </wnp-pop>
 
-      <wnp-pop url="views/sampleOne.html">
+      <wnp-pop url="views/sampleOne.html" wnp-pop-name="small">
        <h4>
-       Use the right mouse click over the input fields to Open a Modal to change values.
+       Use the <span style="color: red">right mouse click</span> over the input fields to Open a Modal to change values.
        </h4>
 
       
