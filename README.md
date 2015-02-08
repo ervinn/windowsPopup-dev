@@ -10,6 +10,8 @@ To download the [latest stable Development Environment (beta v0.0.4) click here]
 -----
 #####New in v0.0.5 :
 - Add more unit and E2E test cases for the new `wnp-pop`, directive.
+- Add more help description for how to use the `wnp-pop` directive (add a "Modal usega Help" modal window).
+- Fix some text spelling mistakes on the Demo window.
 - BUG Fix : make sure only one Modal DOM element is added to the page, for each URL and name.
 
 -----
