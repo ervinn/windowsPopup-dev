@@ -70,12 +70,12 @@
      </p>
      <p>   
         For each browser window AngularJs has to be loaded separatelly. You need to load the same <b>"WindowsPopup.js" </b> file in both the Parent and the Child window. 
-        The <b>'windowsPopup'</b> module helps you to communicate between the Child and Parent window, by using the <b>wnp-popup</b> directive. You use the left mouse click to open a new window. See below for an example usage.
+        The <b>'windowsPopup'</b> module helps you communicate between the Child and Parent window, by using the <b>wnp-popup</b> directive. You left-click with the mouse to open a new window. See below for an example usage.
      </p>
      <wnp-pop url="views/modalHelp.html" wnp-pop-name="large">
      <p>
-        Sometimes you may not want to open a new browser window; in that case you can open a Bootstrap Modal window. For Modal windows the Child(Modal) and Parent are running on the same AngularJS load environment, so no need to load the <b>"WindowsPopup.js" </b> file again for the Child(Modal) window. To open a Modal window, use the <b>wnp-pop</b> directive. 
-        (You can try it by doing a right mouse click. <b style="color: red"><i> Do a right mouse click here ! </i></b> )
+        Sometimes you may not want to open a new browser window; in that case you can open a Bootstrap Modal window. For Modal windows the Child(Modal) and Parent are running on the same AngularJS load environment, so there is no need to load the <b>"WindowsPopup.js" </b> file again for the Child(Modal) window. To open a Modal window, use the <b>wnp-pop</b> directive. 
+        (You can try it by right-clicking with the mouse. <b style="color: red"><i> Right-click with the mouse here! ! </i></b> )
         You use the right mouse click to open a Modal window.        
      </p>
      </wnp-pop>
@@ -90,7 +90,7 @@
      In the Child window you have :
      <pre> &lt;input type="text" wnp-model="<b>item_one</b>" ng-model="childData.dat" /&gt; </pre>
     
-    See the <b> item_one </b> value, that is used to link the Child model data to the parent model data.
+    See the <b> item_one </b> value, this is used to link the Child model data to the parent model data.
 
     In the Parent window you have :
     <pre>
@@ -102,7 +102,7 @@
        &gt;Open Popup 1 from here, using Angular&lt;/wnp-popup &gt;
      </pre>
 
-     At the time of clicking on that link, the Parent model data that was marked for linking is copied to the child windows encapsulated in a shareble object. The sharable object contains callback functions that will be executed and updates the Parents model at the time when the user changes the child linked model data.
+     At the time of clicking on that link, the Parent model data that was marked for linking is copied to the child windows encapsulated in a shareable object. The shareable object contains callback functions that will be executed and updates the Parents model at the time when the user changes the child linked model data.
      </p>
 	 <p>
       You can have only one popup window open with the same window name, see above (<b>wnp-name="popupWindow"</b>). If you want to open more windows, use a different wnp-name. 
@@ -112,8 +112,8 @@
      <hr />
      <wnp-pop url="views/contextMenuOne.html" wnp-pop-name="small">
 
-      <h4> Some sample links to open popup windows by left click :</h4>
-      <h5> (If you want to open the windows from a Modal context menu then <span style="color: red"> righ click below </span>) </h5>
+      <h4> Some sample links to open popup windows by left-clicking:</h4>
+      <h5> (If you want to open the windows from a Modal context menu then <span style="color: red"> right click below </span>) </h5>
       <p> Click the following link to open the popup. Click again to close : 
          <wnp-popup url="views/popupWindow.html#/sampleOne"
                        width="450" 
@@ -173,7 +173,7 @@
 
       <wnp-pop url="views/sampleOne.html" wnp-pop-name="small">
        <h4>
-       Use the <span style="color: red">right mouse click</span> over the input fields to Open a Modal to change values.
+       <span style="color: red">Right-click with the mouse</span> over the input fields to Open a Modal to change values.
        </h4>
 
       
@@ -201,7 +201,7 @@
      <p></p>
      <hr />
 
-     <h4> Build below your own Popup Window wnp-popup link :</h4>
+     <h4> Build below your own Popup Window wnp-popup link below:</h4>
 
      <table width="100%" border="0" ng-controller="buildYourPopupCtrl">
      <tr>
@@ -292,7 +292,7 @@
       </table>
      <hr />
      <p>
-      If you opened any of the windows above, you'd seen that from the Child window you were able to change the Parent beckground color. You may ask, how the data was bind from the Child when there was no <b>'ng-model'</b> tag in the Parent views. In those cases <b>'windowsPopup'</b> module gives you a service to use. You need to inject the <b>'wnpToChild'</b> service to you controller, see how was it was done for the above example :
+      If you opened any of the windows above, you would have seen that from the Child window you were able to change the Parent background color. You may be asking yourself how the data was bound from the Child when there was no <b>'ng-model'</b> tag in the Parent views. In these cases <b>'windowsPopup'</b> module gives you a service to use. You need to "inject" the <b>'wnpToChild'</b> service to your controller, see how was it was done for the above example :
 
       <pre>
 .controller('ParentController', function($scope, <b> wnpToChild) </b> {
@@ -312,7 +312,7 @@
   &lt;/select&gt;
       </pre>
 
-      Note that the AngularJS <b>ng-model</b> name for the 'bgrColor' does not have to be the same for the parent and the child. The <b>"item_three"</b> model link has to be the same in both parent and child.
+      Note that the AngularJS <b>ng-model</b> name for the 'bgrColor' does not have to be the same for the parent and the child, but the <b>"item_three"</b> model link has to be the same in both parent and child.
       (BTW: in the above example the child has "brgColor", and the parent has "brgColor", not the same...)
      </p>
 
