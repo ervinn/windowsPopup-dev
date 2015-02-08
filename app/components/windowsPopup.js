@@ -18,7 +18,7 @@ angular
   .module('windowsPopup', ['windowsPopupConfig']) 
   .constant('wnpContans', {
     'version': '0.0.5',
-    'release_date' : 'NOT YET',
+    'release_date' : '2015-02-08',
     'debugMode' : false
    })
   .config( function (wnpContans) {
