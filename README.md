@@ -8,6 +8,10 @@ To download the [latest stable Development Environment (v0.0.5) click here](http
 #### Next Version -> 0.0.6 -(Released NOT YET)
 
 -----
+#####New in v0.0.6 :
+- Add attributes `wnp-left-click`, `wnp-dbl-click`, and `wnp-right-click`, those can be used to control which mouse click will open the Popup and Modal windows.
+
+-----
 #####New in v0.0.5 :
 - Add more unit and E2E test cases for the new `wnp-pop`, directive.
 - Add more help description for how to use the `wnp-pop` directive (add a "Modal usega Help" modal window).
