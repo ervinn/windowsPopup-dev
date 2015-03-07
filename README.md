@@ -9,7 +9,7 @@ To download the [latest stable Development Environment (v0.0.5) click here](http
 
 -----
 #####New in v0.0.6 :
-- Add attributes `wnp-left-click`, `wnp-dbl-click`, and `wnp-right-click`, those can be used to control which mouse click will open the Popup and Modal windows. (To open a separate browser window by the `wnp-popup` directive, the default is normal left mouse click. To open a Modal window by the `wnp-pop` directive, the default is the mouse right click. Those defaults can overwritten by the added new attributes, those are : `wnp-left-click`, `wnp-dbl-click`, and `wnp-right-click`)
+- Add attributes `wnp-left-click`, `wnp-dbl-click`, and `wnp-right-click`, those can be used to control which mouse click will open the Popup and Modal windows. (To open a separate browser window by the `wnp-popup` directive, the default is normal left mouse click. Add `wnp-dbl-click` to open it by double click. To open a Modal window by the `wnp-pop` directive, the default is the mouse right click. The default can overwritten by the added new attributes, those are : `wnp-left-click`, `wnp-dbl-click`, and `wnp-right-click`. Note: Because of the popup blockers on most browsers, new browser window can not be opened by the right mouse click.)
 - Add some sampples related to the new attributes to the Demo window.
 
 -----
