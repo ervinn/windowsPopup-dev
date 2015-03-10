@@ -72,13 +72,20 @@
         For each browser window AngularJs has to be loaded separatelly. You need to load the same <b>"WindowsPopup.js" </b> file in both the Parent and the Child window. 
         The <b>'windowsPopup'</b> module helps you communicate between the Child and Parent window, by using the <b>wnp-popup</b> directive. You left-click with the mouse to open a new window. See below for an example usage.
      </p>
-     <wnp-pop url="views/modalHelp.html" wnp-pop-name="large">
      <p>
+      <wnp-pop url="views/modalHelp.html" wnp-pop-name="large">
         Sometimes you may not want to open a new browser window; in that case you can open a Bootstrap Modal window. For Modal windows the Child(Modal) and Parent are running on the same AngularJS load environment, so there is no need to load the <b>"WindowsPopup.js" </b> file again for the Child(Modal) window. To open a Modal window, use the <b>wnp-pop</b> directive. 
-        (You can try it by right-clicking with the mouse. <b style="color: red"><i> Right-click with the mouse here! ! </i></b> )
-        You use the right mouse click to open a Modal window.        
+        (You can try it by right-clicking with the mouse. <b style="color: red"><i> Right-click with the mouse here! ! </i></b> ) 
+      </wnp-pop>
+        If you want to open the Modal window with a normal click, that can be done by adding the <b> wnp-left-click </b> attribute. 
+      <wnp-pop url="views/modalHelp.html" wnp-pop-name="large" wnp-left-click >
+        (You can try it by normal clicking with the mouse. <b style="color: red"><i> Left-click with the mouse here! ! </i></b> ) 
+      </wnp-pop>
+        If you want to open the Modal window with a double click, that can be done by adding the <b> wnp-dbl-click </b> attribute. 
+      <wnp-pop url="views/modalHelp.html" wnp-pop-name="large" wnp-dbl-click >
+        (You can try it by double clicking with the mouse. <b style="color: red"><i> Double-click with the mouse here! ! </i></b> ) 
+      </wnp-pop>      
      </p>
-     </wnp-pop>
      <p>      
         Data binding from Child to Parent is managed by the <b>'wnp-model'</b> directive. This directive needs to be added as an attribute to an HTML tag where <b>'ng-module'</b> is present, in both Parent and Child. The <b>'wnp-model'</b> attribute is used to link Child to parent. 
      </p>
@@ -160,7 +167,7 @@
                        >Win 5, Apply for a group of values.</wnp-popup>
      . <br />
          The link opens a window; that window can open an other one ... : 
-         <wnp-popup url="views/popupWindow.html#/sampleFive"
+         <wnp-popup url="views/popupWindow.html#/sampleFive"  
                        width="400"
                        height="500"
                        wnp-name="popupWindow_6"

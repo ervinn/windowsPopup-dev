@@ -17,8 +17,8 @@
 angular
   .module('windowsPopup', ['windowsPopupConfig']) 
   .constant('wnpContans', {
-    'version': '0.0.5',
-    'release_date' : '2015-02-08',
+    'version': '0.0.6',
+    'release_date' : '(NOT Release yet)',
     'debugMode' : false
    })
   .config( function (wnpContans) {
@@ -136,6 +136,15 @@ console.log(versionText);
         return false;
       }
     };
+
+    service.present = function( val ) {
+      if ( typeof val === 'undefined' ) {
+        return false;
+      } else {
+        return true;
+      }
+    };
+
 
     return service;
   })
@@ -466,7 +475,7 @@ console.log(versionText);
         /**
          * -- Add a click event handler function ---
          */
-        elem.bind('click', function () {
+        var actionFnc = function () {
           // --- Call apply, they may use interpolation on the incoming attributes. --- 
           scope.$apply();
 
@@ -513,7 +522,17 @@ console.log(versionText);
           //  console.log('Open successfully');
           }
 
-      });
+      };
+      var leftClick  = wnpUtil.present(attrs.wnpLeftClick);
+      var dblClick   = wnpUtil.present(attrs.wnpDblClick);
+//      var rightClick = wnpUtil.present(attrs.wnpRightClick);
+      if ( (dblClick === false ) || leftClick === true ) {
+        elem.bind('click', actionFnc );
+      }
+      if ( dblClick === true ) {
+        elem.bind('dblclick', actionFnc);
+      }
+
     };
     
     /**
@@ -822,17 +841,33 @@ console.log(versionText);
 
 
     var linkFunction = function($scope, element, atttributes) {
-          element.bind('contextmenu', function () {
-            var CONFIG = {};
-            CONFIG.wnpName = uniqueName;
 
-            wnpOpenService.popModalfnc("true", CONFIG);
-            element.parent().find('.'+ uniqueName).modal( {'backdrop' : 'static'} );
-            return false;
-          });
-          // element.bind('click', function() {
-          //   element.find('.modal').modal('hide');
-          // });    
+      var actionFnc = function () {
+          var CONFIG = {};
+          CONFIG.wnpName = uniqueName;
+
+          wnpOpenService.popModalfnc("true", CONFIG);
+          element.parent().find('.'+ uniqueName).modal( {'backdrop' : 'static'} );
+          return false;
+      };
+
+      var leftClick  = wnpUtil.present(atttributes.wnpLeftClick);
+      var dblClick   = wnpUtil.present(atttributes.wnpDblClick);
+      var rightClick = wnpUtil.present(atttributes.wnpRightClick);
+      if ( (leftClick === false && dblClick === false) || rightClick === true ) {
+          element.bind('contextmenu', actionFnc);
+console.log('pop contextmenu='+uniqueName);         
+      } 
+      if ( leftClick === true ) {
+          element.bind('click', actionFnc);
+      } 
+      if ( dblClick === true ) {
+          element.bind('dblclick', actionFnc);
+      }
+
+      // element.bind('click', function() {
+      //   element.find('.modal').modal('hide');
+      // });    
     }
     return linkFunction;
   };

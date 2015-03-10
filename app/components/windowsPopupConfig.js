@@ -14,7 +14,7 @@
 angular
   .module('windowsPopupConfig', [])
   .constant('contans', {
-    'version': '0.0.4',
+    'version': '0.0.5',
    })
   
   .provider('wnpConfig', function() {

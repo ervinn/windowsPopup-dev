@@ -293,25 +293,73 @@ describe('Directive: wnpPopup; testing click functionality', function () {
  
     it ('Should have a bind clicked event attached to the element.', function() {
       expect( wnpOpenService.popWdwfnc.calls.count() ).toBe(0);
- //     browserTrigger(element, 'click');
       element.triggerHandler('click');
       expect( wnpOpenService.popWdwfnc).toHaveBeenCalled();
       expect( wnpOpenService.popWdwfnc.calls.count() ).toBe(1);
     });
 
- //    it ('Should the Window link and Open Window icon class toggle when the link is clicked.', function() {
- //      expect( wnpOpenService.popWdwfnc.calls.count() ).toBe(0);
- //      expect( iconElem.hasClass( clsIconWinLinkName )).toBe(true);
- //      expect( iconElem.hasClass( clsIconOpenWinName )).toBe(false);
- // //     browserTrigger(element, 'click');
- //      element.triggerHandler('click');
- //      expect( wnpOpenService.popWdwfnc).toHaveBeenCalled();
- //      expect( wnpOpenService.popWdwfnc.calls.count() ).toBe(1);
- //      expect( iconElem.hasClass( clsIconWinLinkName )).toBe(false);
- //      expect( iconElem.hasClass( clsIconOpenWinName )).toBe(true);
- //    });
+     it ('Should the Window link and Open Window icon class toggle when the link is clicked.', function() {
+       expect( wnpOpenService.popWdwfnc.calls.count() ).toBe(0);
+       expect( iconElem.hasClass( clsIconWinLinkName )).toBe(true);
+       expect( iconElem.hasClass( clsIconOpenWinName )).toBe(false);
+ 
+       element.triggerHandler('click');
+       expect( wnpOpenService.popWdwfnc).toHaveBeenCalled();
+       expect( wnpOpenService.popWdwfnc.calls.count() ).toBe(1);
+//       expect( iconElem.hasClass( clsIconWinLinkName )).toBe(false);
+//       expect( iconElem.hasClass( clsIconOpenWinName )).toBe(true);
+     });
   });
 });
+
+
+
+
+
+describe('Directive: wnpPopup; testing Double Click functionality', function () {
+  var wnpOpenService;
+  var wnpConfig;
+  var scope = {};
+  var element;
+
+  var iconElem;
+
+  // load the controller's module
+  beforeEach(module('windowsPopup'));
+  // -- Inject needed services --
+  beforeEach(inject(function ($injector, $compile, $rootScope) {
+    scope = $rootScope.$new();
+    wnpOpenService = $injector.get('wnpOpenService');
+    wnpConfig   = $injector.get('wnpConfig');
+
+    element = angular.element('<wnp-popup url="views/popupWindow.html" \
+     wnp-dbl-click >Testing</wnp-popup>');   
+
+    $compile(element)(scope);
+
+    spyOn(wnpOpenService, 'popWdwfnc').and.returnValue(true);
+  }));
+
+  describe('wnpPopup ...', function() {
+
+    it ('Should have a bind clicked event NOT attached to the element.', function() {
+      expect( wnpOpenService.popWdwfnc.calls.count() ).toBe(0);
+      element.triggerHandler('click');
+      expect( wnpOpenService.popWdwfnc).not.toHaveBeenCalled();
+      expect( wnpOpenService.popWdwfnc.calls.count() ).toBe(0);
+    });
+
+    it ('Should have a bind dblclick event attached to the element.', function() {
+      expect( wnpOpenService.popWdwfnc.calls.count() ).toBe(0);
+      element.triggerHandler('dblclick');
+      expect( wnpOpenService.popWdwfnc).toHaveBeenCalled();
+      expect( wnpOpenService.popWdwfnc.calls.count() ).toBe(1);
+    });
+
+
+  });
+});
+
 
 
 
@@ -1052,7 +1100,7 @@ describe('Directive: wnpPop', function () {
 
   }));
 
-  describe('wnpModel ...', function() {
+  describe('wnpPop ...', function() {
     it('Should call wnpToChild.addOneSharedModel', function(){
 
     });
